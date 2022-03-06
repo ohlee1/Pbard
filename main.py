@@ -27,7 +27,10 @@ client.on_publish = on_publish
 client.tls_set()
 
 client.username_pw_set(username="JustAnotherLiam", password="Liamiot2021")
+
+
 async def main():
+    client.loop_start()
 
     client.connect("cefe654d7ef341e290b04311de927a20.s2.eu.hivemq.cloud", 8883, 60)
 
@@ -35,7 +38,5 @@ async def main():
 
     client.subscribe("bruh/bruh", qos=0)
     client.publish("bruh/bruh", "bruhbruhbruh", 0)
-    
-    client.loop_forever()
 
 asyncio.run(main())
