@@ -34,7 +34,6 @@ async def main():
 
     client.connect("cefe654d7ef341e290b04311de927a20.s2.eu.hivemq.cloud", 8883, 60)
 
-    print("ur mum")
 
     client.subscribe("bruh/bruh", qos=0)
     client.publish("bruh/bruh", "bruhbruhbruh", 0)
