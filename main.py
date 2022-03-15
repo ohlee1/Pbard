@@ -24,15 +24,16 @@ client.on_message = on_message
 client.on_subscribe = on_subscribe
 client.on_publish = on_publish
 
-client.tls_set()
+#client.tls_set()
 
-client.username_pw_set(username="JustAnotherLiam", password="Liamiot2021")
+#client.username_pw_set(username="JustAnotherLiam", password="Liamiot2021")
+
 async def main():
 
-    client.connect("cefe654d7ef341e290b04311de927a20.s2.eu.hivemq.cloud", 8883, 60)
-
-    client.subscribe("bruh/bruh", qos=0)
-    client.publish("bruh/bruh", "bruhbruhbruh", 0)
+    #client.connect("cefe654d7ef341e290b04311de927a20.s2.eu.hivemq.cloud", 8883, 60)
+    client.connect("52.232.13.39", 1883, 60)
+    client.subscribe("/bruh/bruh", qos=0)
+    client.publish("/bruh/bruh", "bruhbruhbruh", 0)
     
     client.loop_forever()
 
