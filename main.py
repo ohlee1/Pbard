@@ -55,7 +55,7 @@ def main():
     client.connect("52.232.13.39", 1883, 60)
     string = input("Please enter stuff here for topic: ")
     stringMsg = input("Please enter message: ")
-    client.subscribe(string, qos=2)
+    #client.subscribe(string, qos=2)
     client.publish(string, stringMsg, qos=2, retain=True)
     
     #Network loop forever
