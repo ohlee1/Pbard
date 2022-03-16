@@ -56,7 +56,7 @@ def main():
     string = input("Please enter stuff here for topic: ")
     stringMsg = input("Please enter message: ")
     client.subscribe(string, qos=2)
-    client.publish(string, stringMsg, 2)
+    client.publish(string, stringMsg, qos=2, retain=True)
     
     #Network loop forever
     #TODO
