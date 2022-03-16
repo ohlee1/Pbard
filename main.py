@@ -53,8 +53,8 @@ def main():
 
     #General debugging as well as connectivity for the moment
     client.connect("52.232.13.39", 1883, 60)
-    string = input("Please enter stuff here for topic, yada yada: ")
-    stringMsg = input("Please enter message pls: ")
+    string = input("Please enter stuff here for topic: ")
+    stringMsg = input("Please enter message: ")
     client.subscribe(string, qos=2)
     client.publish(string, stringMsg, 2)
     
