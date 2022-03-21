@@ -52,7 +52,7 @@ def main():
     """
 
     #General debugging as well as connectivity for the moment
-    client.connect("52.232.13.39", 1883, 60)
+    client.connect("52.232.13.39", 1883, 30)
     string = input("Please enter stuff here for topic: ")
     stringMsg = input("Please enter message: ")
     #client.subscribe(string, qos=2)
