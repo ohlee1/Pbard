@@ -53,10 +53,11 @@ def main():
 
     #General debugging as well as connectivity for the moment
     client.connect("52.232.13.39", 1883, 30)
-    string = input("Please enter stuff here for topic: ")
+    #string = input("Please enter stuff here for topic: ")
+    string = "/bruh/bruh"
     stringMsg = input("Please enter message: ")
-    #client.subscribe(string, qos=2)
-    client.publish(string, stringMsg, qos=2, retain=True)
+    client.subscribe(string, qos=2)
+    client.publish(string, stringMsg, qos=2, retain=False)
     
     #Network loop forever
     #TODO
