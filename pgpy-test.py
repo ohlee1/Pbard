@@ -23,6 +23,7 @@ with open(str(keyname)+"-private.txt", "w") as f:
 with open(str(keyname)+"-public.txt", "w") as ff:
     ff.write(str(key.pubkey))
 
+# encrypt message
 txt_msg = pgpy.PGPMessage.new("Hello PGPy World")
 print('txt_msg.is_encrypted')
 print(txt_msg.is_encrypted)
@@ -34,3 +35,11 @@ print(encrypted_txt_msg.is_encrypted)
 print('encrypted_txt_msg.message\n\n')
 print(type(encrypted_txt_msg.message))
 print(str(encrypted_txt_msg))
+
+# Decrypt string
+decrypted_txt_msg = key.decrypt(encrypted_txt_msg)
+print('decrypted_txt_msg.is_encrypted')
+print(decrypted_txt_msg.is_encrypted)
+print('decrypted_txt_msg.message')
+print(decrypted_txt_msg.message)
+print(str(decrypted_txt_msg.message))
