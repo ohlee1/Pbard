@@ -10,7 +10,10 @@ import paho.mqtt.client as mqtt
 def on_connect(client, userdata, flags, rc):
     #TODO
     #Add if else ladder for different result 'rc' codes e.g code 5 for unauthrorised
-    print("Connected to MQTT broker, code: "+str(rc))
+    if rc == 0:
+        print("Connected successfully!")
+    else:
+        print("Connected to MQTT broker, code: "+str(rc))
 
 #Callback for message receive
 def on_message(client, userdata, msg):
@@ -65,9 +68,10 @@ def main():
     print("Thread started\n")
     connectThread.join()
     print("Thread finished\n")
+    client.loop()
 
     try:
-
+        #client.loop_start()
         while True:
             userChoice = input("Input 1 for sending a message\nInput 2 for checking for messages\nInput 3 for subscribing to a new topic\nInput 0 to exit program\nOption: ")
             while integerFlag:
@@ -84,23 +88,17 @@ def main():
                     userChoice = int(input("Please enter 1 for sending a message\n2 for checking messages\n3 for subscribing to a topic\n0 to exit the program\nOption: "))
                     print(f"DEBUGGING USERCHOICE COMPARE WHILE: {userChoice}")
 
-
-
-
-
-
-
-
-
             if userChoice == 1:
                 #topic = input("Please enter a topic: ")
                 topic = "/bruh/bruh"
                 stringMsg = input("Please enter message: ")
                 client.publish(topic, stringMsg, qos=2, retain=False)
+                client.loop()
             
             elif userChoice == 3:
                 topic = input("Input a topic: ")
                 client.subscribe(topic, qos=2)
+                client.loop()
             
             elif userChoice == 2:
                 #Network loop forever
@@ -125,6 +123,7 @@ def main():
             integerFlag = 1
     except KeyboardInterrupt:
         print("Exiting...")
+        #client.loop_stop
         exit(0)
 
 if __name__ == '__main__':
