@@ -1,3 +1,6 @@
+#THREADING TESTING
+
+import threading
 import paho.mqtt.client as mqtt
 
 #Global variable for confirmed connection
@@ -55,7 +58,13 @@ def main():
     integerFlag = 1
 
     #General debugging as well as connectivity for the moment
-    client.connect("52.232.13.39", 1883, 30)
+    connectThread = threading.Thread(target=client.connect, args=("52.232.13.39",1883,30,))
+    #client.connect("52.232.13.39", 1883, 30)
+    print("Thread starting\n")
+    connectThread.start()
+    print("Thread started\n")
+    connectThread.join()
+    print("Thread finished\n")
 
     try:
 
