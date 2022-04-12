@@ -118,8 +118,7 @@ def main():
 
             else:
                 print(f"Unknown selector identified\nuserChoice == {userChoice}")
-                print(f"Unknown selector identified\nuserChoice == {userChoice}")
-                print(f"Unknown selector identified\nuserChoice == {userChoice}")
+
             integerFlag = 1
     except KeyboardInterrupt:
         print("Exiting...")
