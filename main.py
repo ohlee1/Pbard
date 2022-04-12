@@ -1,10 +1,12 @@
 #THREADING TESTING
 
+from glob import glob
 import threading
 import paho.mqtt.client as mqtt
 
-#Global variable for confirmed connection
-
+#Global variables
+publishCallbackFlag = 1
+subscribeCallbackFlag = 1
 
 #Callback for connect
 def on_connect(client, userdata, flags, rc):
@@ -21,15 +23,19 @@ def on_message(client, userdata, msg):
 
 #Callback for publish
 def on_publish(client, userdata, mid):
+    global publishCallbackFlag
     #TODO
     #Make the published callback better
     print("Published")
+    publishCallbackFlag = 0
 
 #Callback for subscribe
 def on_subscribe(client, userdata, mid, granted_qos):
+    global subscribeCallbackFlag
     #TODO
     #Make the subscribed callback better
     print("Subscribed")
+    subscribeCallbackFlag = 0
 
 #Creating client object, giving client id and clean session to false to facilitate pulling of messages from broker
 #TODO
@@ -53,7 +59,8 @@ client.username_pw_set(username="user", password="Jmnb6014")
 #async def main():
 
 def main():
-
+    global publishCallbackFlag
+    global subscribeCallbackFlag
     #Debugging hivemq cluster for connectivity
     """
     client.connect("cefe654d7ef341e290b04311de927a20.s2.eu.hivemq.cloud", 8883, 60)
@@ -90,15 +97,19 @@ def main():
 
             if userChoice == 1:
                 #topic = input("Please enter a topic: ")
-                topic = "/bruh/bruh"
+                topic = "bruh/liam"
                 stringMsg = input("Please enter message: ")
                 client.publish(topic, stringMsg, qos=2, retain=False)
-                client.loop()
-            
+                while publishCallbackFlag:
+                    client.loop()
+                publishCallbackFlag = 1
+
             elif userChoice == 3:
                 topic = input("Input a topic: ")
                 client.subscribe(topic, qos=2)
-                client.loop()
+                while subscribeCallbackFlag:
+                    client.loop()
+                subscribeCallbackFlag = 1
             
             elif userChoice == 2:
                 #Network loop forever
