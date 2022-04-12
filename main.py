@@ -56,10 +56,10 @@ def main():
         #General debugging as well as connectivity for the moment
         
         #string = input("Please enter stuff here for topic: ")
-        stringLiam = "bruh/ollie"
-        stringOllie = "bruh/liam"
+        stringLiam = "test1/ollie"
+        stringOllie = "test1/liam"
         #stringMsg = input("Please enter message: ")
-        stringMsg = "testbooba"
+        stringMsg = "testmsg"
         client.subscribe(stringLiam, qos=2)
         client.publish(stringOllie, stringMsg, qos=2, retain=False)
         client.loop_start()
@@ -71,12 +71,12 @@ def main():
             #client.loop_forever()
             #sleep(1000)
             #client.loop_stop()
-            stringMsg = input("You:")
+            stringMsg = input("")
             client.publish(stringOllie, stringMsg, qos=2, retain=False)
         
         #print(stringMsg)
     except:
-        print("fuck")
+        print("Exiting")
     finally:
         client.loop_stop()
 if __name__ == '__main__':
