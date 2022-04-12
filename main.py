@@ -50,19 +50,66 @@ def main():
     """
     client.connect("cefe654d7ef341e290b04311de927a20.s2.eu.hivemq.cloud", 8883, 60)
     """
-
+    integerFlag = 1
     #General debugging as well as connectivity for the moment
     client.connect("52.232.13.39", 1883, 30)
-    #string = input("Please enter stuff here for topic: ")
-    string = "/bruh/bruh"
-    stringMsg = input("Please enter message: ")
-    client.subscribe(string, qos=2)
-    client.publish(string, stringMsg, qos=2, retain=False)
+
+    while True:
+        userChoice = input("Input 1 for sending a message\nInput 2 for checking for messages\nInput 3 for subscribing to a new topic\nInput 0 to exit program\nOption: ")
+        while integerFlag:
+            try:
+                userChoice = int(userChoice)
+                integerFlag = 0
+            except ValueError:
+                print("Please enter a integer...")
+                userChoice = input("Bruh pls\n")
+            
+        print(f"DEBUGGING USERCHOICE INIT WHILE: {userChoice}")
+
+        while userChoice > 3 or userChoice < 0:
+                userChoice = int(input("Please enter 1 for sending a message\n2 for checking messages\n3 for subscribing to a topic\n0 to exit the program\nOption: "))
+                print(f"DEBUGGING USERCHOICE COMPARE WHILE: {userChoice}")
+
+
+
+
+
+
+
+
+
+        if userChoice == 1:
+            #topic = input("Please enter a topic: ")
+            topic = "/bruh/bruh"
+            stringMsg = input("Please enter message: ")
+            client.publish(topic, stringMsg, qos=2, retain=False)
+        
+        elif userChoice == 3:
+            topic = input("Input a topic: ")
+            client.subscribe(topic, qos=2)
+        
+        elif userChoice == 2:
+            #Network loop forever
+            #TODO
+            #Find a way to make it loop for subscribe for a certain length maybe with a counter/while loop?
+            #LIAM: Implemented a small temporary solution using keyboard interrupt to allow check of messages and backout option, elegent solution required here
+            try:
+                while True:
+                    print("Checking for messages... Press CTRL+C to back out!")
+                    client.loop_forever()
+            except KeyboardInterrupt:
+                pass
+
+        elif userChoice == 0:
+            print("Exiting program...")
+            exit(0)
+
+        else:
+            print(f"Unknown selector identified\nuserChoice == {userChoice}")
+            print(f"Unknown selector identified\nuserChoice == {userChoice}")
+            print(f"Unknown selector identified\nuserChoice == {userChoice}")
+        integerFlag = 1
     
-    #Network loop forever
-    #TODO
-    #Find a way to make it loop for subscribe for a certain length maybe with a counter/while loop?
-    client.loop_forever()
 
 if __name__ == '__main__':
     main()
