@@ -2,7 +2,7 @@ from time import sleep
 import paho.mqtt.client as mqtt
 import asyncio
 
-username="ollie2"
+username="frank"
 msgThread="test/wedtest"
 #Callback for connect
 def on_connect(client, userdata, flags, rc):
