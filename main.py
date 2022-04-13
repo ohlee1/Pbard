@@ -15,9 +15,11 @@ def on_message(client, userdata, msg):
     #print(msg.topic+" "+str(msg.payload))
     recStr = str(msg.payload)
     recStr = recStr.lstrip("b\'").rstrip("\'")
-    recStr.split(":", 1)
-    if(recStr[0] == username):
-        print(recStr[1])
+#    print(recStr)
+    splStr = recStr.split(":")
+#    print(splStr)
+    if(splStr[0] != username):
+        print(recStr)
     else:
         print("", end="")
 
@@ -66,7 +68,7 @@ def main():
         
         #string = input("Please enter stuff here for topic: ")
         #stringMsg = input("Please enter message: ")
-        stringMsg = "testmsg"
+        stringMsg = "testmsg:1"
         client.subscribe(msgThread, qos=2)
         client.publish(msgThread, stringMsg, qos=2, retain=False)
         client.loop_start()
