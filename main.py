@@ -86,7 +86,7 @@ def main():
         
         #print(stringMsg)
     except:
-        print("Exiting")
+        print("\nExiting")
     finally:
         client.loop_stop()
 if __name__ == '__main__':
