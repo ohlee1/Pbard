@@ -2,6 +2,8 @@ from time import sleep
 import paho.mqtt.client as mqtt
 import asyncio
 
+username="ollie2"
+msgThread="test/wedtest"
 #Callback for connect
 def on_connect(client, userdata, flags, rc):
     #TODO
@@ -10,13 +12,20 @@ def on_connect(client, userdata, flags, rc):
 
 #Callback for message receive
 def on_message(client, userdata, msg):
-    print(msg.topic+" "+str(msg.payload))
+    #print(msg.topic+" "+str(msg.payload))
+    recStr = str(msg.payload)
+    recStr = recStr.lstrip("b\'").rstrip("\'")
+    recStr.split(":", 1)
+    if(recStr[0] == username):
+        print(recStr[1])
+    else:
+        print("", end="")
 
 #Callback for publish
 def on_publish(client, userdata, mid):
     #TODO
     #Make the published callback better
-    print(" ", end='')
+    print("", end='')
 
 #Callback for subscribe
 def on_subscribe(client, userdata, mid, granted_qos):
@@ -27,7 +36,7 @@ def on_subscribe(client, userdata, mid, granted_qos):
 #Creating client object, giving client id and clean session to false to facilitate pulling of messages from broker
 #TODO
 #Work on making it pull from broker
-client = mqtt.Client(client_id="liam", clean_session=False, userdata=None, transport="tcp")
+client = mqtt.Client(client_id=username, clean_session=False, userdata=None, transport="tcp")
 
 #Setting up callbacks for the client object
 client.on_connect = on_connect
@@ -56,12 +65,10 @@ def main():
         #General debugging as well as connectivity for the moment
         
         #string = input("Please enter stuff here for topic: ")
-        stringLiam = "test1/ollie"
-        stringOllie = "test1/liam"
         #stringMsg = input("Please enter message: ")
         stringMsg = "testmsg"
-        client.subscribe(stringLiam, qos=2)
-        client.publish(stringOllie, stringMsg, qos=2, retain=False)
+        client.subscribe(msgThread, qos=2)
+        client.publish(msgThread, stringMsg, qos=2, retain=False)
         client.loop_start()
         #Network loop forever
         #TODO
@@ -72,7 +79,8 @@ def main():
             #sleep(1000)
             #client.loop_stop()
             stringMsg = input("")
-            client.publish(stringOllie, stringMsg, qos=2, retain=False)
+            stringMsg = username+":"+stringMsg
+            client.publish(msgThread, stringMsg, qos=2, retain=False)
         
         #print(stringMsg)
     except:
