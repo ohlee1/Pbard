@@ -1,4 +1,5 @@
 from time import sleep
+import json
 import paho.mqtt.client as mqtt
 import asyncio
 from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm
@@ -14,28 +15,41 @@ def on_connect(client, userdata, flags, rc):
 
 #Callback for message receive
 def on_message(client, userdata, msg):
+    y=msg.payload.decode()
+#    recJson = msg.payload
+#    print("json before strip:", recJson)
+#    sleep(2)
+#    recJson.lstrip("b\'").rstrip("\'")
+#   print("json after strip:", recJson)
+#    msg_in = json.loads(recJson)
+#    sleep(5)
     #print(msg.topic+" "+str(msg.payload))
-    tempStr = str(msg.payload).lstrip("b\'").rstrip("\'")
-    toDecrypt=pgpy.PGPMessage.from_blob(tempStr)
+#    tempStr = str(msg.payload).lstrip("b\'").rstrip("\'")
+#    tempStr.lstrip().rstrip()
+#    print("tempStr is \n"+tempStr)
+    sleep(5)
+    toDecrypt=pgpy.PGPMessage.from_blob(y)
 #    with open ("currentMsg.txt", "w") as x1:
-#        x1.write(str(msg.payload))
+#        x1.write(tempStr)
+#        json.dump(tempStr, x1)
 #    toDecrypt=pgpy.PGPMessage.from_file("currentMsg.txt")
-    recStr = priKey.decrypt(toDecrypt)
-    recStr = recStr.lstrip("b\'").rstrip("\'")
+#    recStr = priKey.decrypt(toDecrypt)
+#    recStr = recStr.lstrip("b\'").rstrip("\'")
 #    print(recStr)
-    splStr = recStr.split(":")
+#    splStr = recStr.split(":")
 #    print(splStr)
-    if(splStr[0] != username):#
-        print(recStr)
-    else:
-        print("", end="")
-    print(str(msg.payload))
+#    if(splStr[0] != username):#
+#        print(recStr)
+#    else:
+#        print("", end="")
+    print("received:")
+    print(priKey.decrypt(toDecrypt))
 
 #Callback for publish
 def on_publish(client, userdata, mid):
     #TODO
     #Make the published callback better
-    print("", end='')
+    print("sent", end='\n')
 
 #Callback for subscribe
 def on_subscribe(client, userdata, mid, granted_qos):
@@ -81,7 +95,7 @@ def main():
         #stringMsg = input("Please enter message: ")
         stringMsg = "testmsg:1"
         client.subscribe(msgThread, qos=2)
-        client.publish(msgThread, stringMsg, qos=2, retain=False)
+#        client.publish(msgThread, stringMsg, qos=2, retain=False)
         client.loop_start()
         #Network loop forever
         #TODO
@@ -92,9 +106,20 @@ def main():
             #sleep(1000)
             #client.loop_stop()
             stringMsg = input("")
+            print("before msg.new")
             stringMsg = pgpy.PGPMessage.new(username+":"+stringMsg)
-            encryptedMsg = priKey.pubkey.encrypt(stringMsg)
+            print("after msg.new")
+            encryptedMsg = str(priKey.pubkey.encrypt(stringMsg))
+            print(encryptedMsg)
+            print("after msg encrypt")
+#            jsonMsg = json.dumps(encryptedMsg)
+#            print(jsonMsg)
+#            print("after json.dumps")
             client.publish(msgThread, encryptedMsg, qos=2, retain=False)
+            print("after publish")
+            sleep(2)
+#            print("encrypted msg is:", encryptedMsg)
+#            sleep(2)
         
         #print(stringMsg)
     except:
