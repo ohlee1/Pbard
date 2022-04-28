@@ -5,7 +5,7 @@ import asyncio
 from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm
 import pgpy
 
-username="frank"
+username="ollie"
 msgThread="test/wedtest"
 #Callback for connect
 def on_connect(client, userdata, flags, rc):
@@ -16,7 +16,7 @@ def on_connect(client, userdata, flags, rc):
 #Callback for message receive
 def on_message(client, userdata, msg):
     y=msg.payload.decode()
-    print("payload is:", y)
+#    print("payload is:", y)
 #    recJson = msg.payload
 #    print("json before strip:", recJson)
 #    sleep(2)
@@ -28,9 +28,9 @@ def on_message(client, userdata, msg):
 #    tempStr = str(msg.payload).lstrip("b\'").rstrip("\'")
 #    tempStr.lstrip().rstrip()
 #    print("tempStr is \n"+tempStr)
-    sleep(5)
-    with open ("currentMsg.txt", "w") as x1:
-        x1.write(y)
+    sleep(0)
+#    with open ("currentMsg.txt", "w") as x1:
+#        x1.write(y)
     toDecrypt=pgpy.PGPMessage.from_blob(y)
 #    with open ("currentMsg.txt", "w") as x1:
 #        x1.write(tempStr)
@@ -45,15 +45,20 @@ def on_message(client, userdata, msg):
 #        print(recStr)
 #    else:
 #        print("", end="")
-    print("received:")
+#    print("received:")
     final = priKey.decrypt(toDecrypt)
-    print(final.message)
+    finStr = str(final.message)
+    splStr = finStr.split(":")
+    if(splStr[0] != username):#
+        print(finStr)
+    else:
+        print("", end="")
 
 #Callback for publish
 def on_publish(client, userdata, mid):
     #TODO
     #Make the published callback better
-    print("sent", end='\n')
+    print("", end='')
 
 #Callback for subscribe
 def on_subscribe(client, userdata, mid, granted_qos):
@@ -110,20 +115,20 @@ def main():
             #sleep(1000)
             #client.loop_stop()
             stringMsg = input("")
-            print("before msg.new")
+#            print("before msg.new")
             stringMsg = pgpy.PGPMessage.new(username+":"+stringMsg)
-            print("after msg.new")
+#            print("after msg.new")
             encryptedMsg = str(priKey.pubkey.encrypt(stringMsg))
-            print(encryptedMsg)
-            with open ("oldMsg.txt", "w") as x2:
-                x2.write(encryptedMsg)
-            print("after msg encrypt")
+#            print(encryptedMsg)
+#            with open ("oldMsg.txt", "w") as x2:
+#                x2.write(encryptedMsg)
+#            print("after msg encrypt")
 #            jsonMsg = json.dumps(encryptedMsg)
 #            print(jsonMsg)
 #            print("after json.dumps")
             client.publish(msgThread, encryptedMsg, qos=2, retain=False)
-            print("after publish")
-            sleep(2)
+#            print("after publish")
+            sleep(0)
 #            print("encrypted msg is:", encryptedMsg)
 #            sleep(2)
         
