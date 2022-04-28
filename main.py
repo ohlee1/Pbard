@@ -15,16 +15,21 @@ def on_connect(client, userdata, flags, rc):
 #Callback for message receive
 def on_message(client, userdata, msg):
     #print(msg.topic+" "+str(msg.payload))
-    toDecrypt=pgpy.PGPMessage.from_blob(str(msg.payload))
+    tempStr = str(msg.payload).lstrip("b\'").rstrip("\'")
+    toDecrypt=pgpy.PGPMessage.from_blob(tempStr)
+#    with open ("currentMsg.txt", "w") as x1:
+#        x1.write(str(msg.payload))
+#    toDecrypt=pgpy.PGPMessage.from_file("currentMsg.txt")
     recStr = priKey.decrypt(toDecrypt)
     recStr = recStr.lstrip("b\'").rstrip("\'")
 #    print(recStr)
     splStr = recStr.split(":")
 #    print(splStr)
-    if(splStr[0] != username):
+    if(splStr[0] != username):#
         print(recStr)
     else:
         print("", end="")
+    print(str(msg.payload))
 
 #Callback for publish
 def on_publish(client, userdata, mid):
@@ -88,7 +93,7 @@ def main():
             #client.loop_stop()
             stringMsg = input("")
             stringMsg = pgpy.PGPMessage.new(username+":"+stringMsg)
-            encryptedMsg = str(priKey.pubkey.encrypt(stringMsg))
+            encryptedMsg = priKey.pubkey.encrypt(stringMsg)
             client.publish(msgThread, encryptedMsg, qos=2, retain=False)
         
         #print(stringMsg)
