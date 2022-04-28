@@ -16,6 +16,7 @@ def on_connect(client, userdata, flags, rc):
 #Callback for message receive
 def on_message(client, userdata, msg):
     y=msg.payload.decode()
+    print("payload is:", y)
 #    recJson = msg.payload
 #    print("json before strip:", recJson)
 #    sleep(2)
@@ -28,6 +29,8 @@ def on_message(client, userdata, msg):
 #    tempStr.lstrip().rstrip()
 #    print("tempStr is \n"+tempStr)
     sleep(5)
+    with open ("currentMsg.txt", "w") as x1:
+        x1.write(y)
     toDecrypt=pgpy.PGPMessage.from_blob(y)
 #    with open ("currentMsg.txt", "w") as x1:
 #        x1.write(tempStr)
@@ -43,7 +46,8 @@ def on_message(client, userdata, msg):
 #    else:
 #        print("", end="")
     print("received:")
-    print(priKey.decrypt(toDecrypt))
+    final = priKey.decrypt(toDecrypt)
+    print(final.message)
 
 #Callback for publish
 def on_publish(client, userdata, mid):
@@ -111,6 +115,8 @@ def main():
             print("after msg.new")
             encryptedMsg = str(priKey.pubkey.encrypt(stringMsg))
             print(encryptedMsg)
+            with open ("oldMsg.txt", "w") as x2:
+                x2.write(encryptedMsg)
             print("after msg encrypt")
 #            jsonMsg = json.dumps(encryptedMsg)
 #            print(jsonMsg)
