@@ -1,6 +1,8 @@
 from time import sleep
 import paho.mqtt.client as mqtt
 import asyncio
+from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm
+import pgpy
 
 username="frank"
 msgThread="test/wedtest"
@@ -13,7 +15,8 @@ def on_connect(client, userdata, flags, rc):
 #Callback for message receive
 def on_message(client, userdata, msg):
     #print(msg.topic+" "+str(msg.payload))
-    recStr = str(msg.payload)
+    toDecrypt=str(msg.payload)
+    recStr = priKey.decrypt(toDecrypt)
     recStr = recStr.lstrip("b\'").rstrip("\'")
 #    print(recStr)
     splStr = recStr.split(":")
@@ -33,6 +36,7 @@ def on_publish(client, userdata, mid):
 def on_subscribe(client, userdata, mid, granted_qos):
     #TODO
     #Make the subscribed callback better
+
     print("Subscribed")
 
 #Creating client object, giving client id and clean session to false to facilitate pulling of messages from broker
@@ -51,6 +55,8 @@ client.on_publish = on_publish
 client.tls_set()
 """
 
+PRIVATE_KEY_FILE="testkey-private.txt"
+priKey, _ = pgpy.PGPKey.from_file("testkey-private.txt")
 
 client.username_pw_set(username="user", password="Jmnb6014")
 
@@ -81,8 +87,9 @@ def main():
             #sleep(1000)
             #client.loop_stop()
             stringMsg = input("")
-            stringMsg = username+":"+stringMsg
-            client.publish(msgThread, stringMsg, qos=2, retain=False)
+            stringMsg = pgpy.PGPMessage.new(username+":"+stringMsg)
+            encryptedMsg = str(priKey.pubkey.encrypt(stringMsg))
+            client.publish(msgThread, encryptedMsg, qos=2, retain=False)
         
         #print(stringMsg)
     except:
