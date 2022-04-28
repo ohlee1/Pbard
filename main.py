@@ -15,7 +15,7 @@ def on_connect(client, userdata, flags, rc):
 #Callback for message receive
 def on_message(client, userdata, msg):
     #print(msg.topic+" "+str(msg.payload))
-    toDecrypt=str(msg.payload)
+    toDecrypt=pgpy.PGPMessage.from_blob(str(msg.payload))
     recStr = priKey.decrypt(toDecrypt)
     recStr = recStr.lstrip("b\'").rstrip("\'")
 #    print(recStr)
