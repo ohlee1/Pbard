@@ -115,7 +115,7 @@ class  Ui_MainWindow(QMainWindow):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "PushButton"))
+        self.pushButton.setText(_translate("MainWindow", "Send"))
         self.menuAdd_friend.setTitle(_translate("MainWindow", "Add friend"))
         self.menustart_group_chat.setTitle(_translate("MainWindow", "start group chat"))
 
