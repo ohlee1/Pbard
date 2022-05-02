@@ -3,13 +3,14 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from time import sleep
+from datetime import datetime
 import sys
 import json
 import paho.mqtt.client as mqtt
 import asyncio
 from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm
 import pgpy
-username="ollie2"
+username="ollie"
 msgThread="test/wedtest"
 
 def on_connect(client, userdata, flags, rc):
@@ -129,8 +130,12 @@ class  Ui_MainWindow(QMainWindow):
     def pressButt(self):
         stringMsg = self.lineEdit.text()
         self.lineEdit.clear()
+        currentTime = datetime.now()
+        dt_string = currentTime.strftime("%d/%m %H:%M")
+        niceDate = "["+dt_string+"] "
+        print(niceDate)
         #self.textBrowser.append(stringMsg)
-        stringMsg = pgpy.PGPMessage.new(username+":"+stringMsg)
+        stringMsg = pgpy.PGPMessage.new(niceDate+username+": "+stringMsg)
         encryptedMsg = str(priKey.pubkey.encrypt(stringMsg))
         client.publish(msgThread, encryptedMsg, qos=2, retain=False)
 
