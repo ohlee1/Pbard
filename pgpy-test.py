@@ -4,12 +4,12 @@ from time import sleep
 
 # we can start by generating a primary key. For this example, we'll use RSA, but it could be DSA or ECDSA as well
 key = pgpy.PGPKey.new(PubKeyAlgorithm.RSAEncryptOrSign, 4096)
-#keyUserName=str(input("Please enter a name: "))
+keyUserName=str(input("Please enter a name: "))
 keyUserName="ollie"
 #keyComment=str(input("enter a comment: "))
 keyComment="no"
 #keyEmail=str(input("enter an email: "))
-keyEmail="ollie@ollie"
+keyEmail="email@email.com"
 # we now have some key material, but our new key doesn't have a user ID yet, and therefore is not yet usable!
 uid = pgpy.PGPUID.new(keyUserName, comment=keyComment, email=keyEmail)
 
@@ -23,33 +23,13 @@ key.add_uid(uid, usage={KeyFlags.Sign, KeyFlags.EncryptCommunications, KeyFlags.
 
 keyname=input("Please enter name of key: ")
 
-with open(str(keyname)+"-private.txt", "w") as f:
+with open(str(keyname)+"-private.asc", "w") as f:
     f.write(str(key))
 
-with open(str(keyname)+"-public.txt", "w") as ff:
+with open(str(keyname)+"-public.asc", "w") as ff:
     ff.write(str(key.pubkey))
-'''
-# encrypt message
-txt_msg = pgpy.PGPMessage.new("Hello PGPy World")
-print('txt_msg.is_encrypted')
-print(txt_msg.is_encrypted)
-print('txt_msg.message')
-print(txt_msg.message)
-encrypted_txt_msg = key.pubkey.encrypt(txt_msg)
-print('encrypted_txt_msg.is_encrypted')
-print(encrypted_txt_msg.is_encrypted)
-print('encrypted_txt_msg.message\n\n')
-print(type(encrypted_txt_msg.message))
-print(str(encrypted_txt_msg))
 
-# Decrypt string
-decrypted_txt_msg = key.decrypt(encrypted_txt_msg)
-print('decrypted_txt_msg.is_encrypted')
-print(decrypted_txt_msg.is_encrypted)
-print('decrypted_txt_msg.message')
-print(decrypted_txt_msg.message)
-print(str(decrypted_txt_msg.message))
-'''
+
 sleep(1)
 print("\n\n")
 sleep(1)
@@ -60,9 +40,12 @@ priKey, _ = pgpy.PGPKey.from_file(str(PRIVATE_KEY_FILE))
 print("private key is:")
 print(priKey)
 testmsg=pgpy.PGPMessage.new("test msg")
-encrypted_test = priKey.pubkey.encrypt(testmsg)
+encrypted_test = str(priKey.pubkey.encrypt(testmsg))
 print("encrypted message is: ")
-print(str(encrypted_test))
-decrypted_test=priKey.decrypt(encrypted_test)
+print(encrypted_test)
+with open("currentMsg.txt", "w") as x1:
+    x1.write(encrypted_test)
+msg2 = pgpy.PGPMessage.from_blob(encrypted_test)
+decrypted_test=priKey.decrypt(msg2)
 print("decrypted message is: "+str(decrypted_test.message))
 #https://stackoverflow.com/questions/62858697/encrypt-decrypt-message-using-pgpy#63434142
