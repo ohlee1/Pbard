@@ -5,7 +5,7 @@ from time import sleep
 # we can start by generating a primary key. For this example, we'll use RSA, but it could be DSA or ECDSA as well
 key = pgpy.PGPKey.new(PubKeyAlgorithm.RSAEncryptOrSign, 4096)
 keyUserName=str(input("Please enter a name: "))
-keyUserName="ollie"
+keyUserName="liam"
 #keyComment=str(input("enter a comment: "))
 keyComment="no"
 #keyEmail=str(input("enter an email: "))
