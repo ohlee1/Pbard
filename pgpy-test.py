@@ -35,7 +35,7 @@ print("\n\n")
 sleep(1)
 
 #reading in key from file and ecrypting it then decrypting
-PRIVATE_KEY_FILE=str(keyname)+"-private.txt"
+PRIVATE_KEY_FILE=str(keyname)+"-private.asc"
 priKey, _ = pgpy.PGPKey.from_file(str(PRIVATE_KEY_FILE))
 print("private key is:")
 print(priKey)
@@ -43,7 +43,7 @@ testmsg=pgpy.PGPMessage.new("test msg")
 encrypted_test = str(priKey.pubkey.encrypt(testmsg))
 print("encrypted message is: ")
 print(encrypted_test)
-with open("currentMsg.txt", "w") as x1:
+with open("currentMsg.asc", "w") as x1:
     x1.write(encrypted_test)
 msg2 = pgpy.PGPMessage.from_blob(encrypted_test)
 decrypted_test=priKey.decrypt(msg2)
