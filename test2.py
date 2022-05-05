@@ -16,12 +16,16 @@ msgThread="test/wedtest"
 
 my_private_key_file="my-private-key/myprikey.asc"
 friendPubKeys = []
+friendKeyFiles = []
 priKey, _ = pgpy.PGPKey.from_file(my_private_key_file)
 #read in each file in the folder friend-public-key and store them in a list
 for files in os.listdir("friend-public-key"):
     if files.endswith(".asc"):
-        temp, _ =pgpy.PGPKey.from_file(files)
-        friendPubKeys.append(temp)
+        friendKeyFiles.append(files)
+
+for i in range(len(friendKeyFiles)):
+    temp, _ =pgpy.PGPKey.from_file("friend-public-key/"+friendKeyFiles[i])
+    friendPubKeys.append(temp)
 
 def on_connect(client, userdata, flags, rc):
     #TODO
@@ -156,7 +160,8 @@ class  Ui_MainWindow(QMainWindow):
 
         enc_msg = priKey.pubkey.encrypt(enc_msg, cipher=cipher, sessionkey=sessionkey)
         del sessionkey
-        client.publish(msgThread, enc_msg, qos=2, retain=False)
+        encryptedMsg = str(enc_msg)
+        client.publish(msgThread, encryptedMsg, qos=2, retain=False)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
