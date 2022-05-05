@@ -5,6 +5,7 @@ from PyQt5.QtGui import *
 from time import sleep
 from datetime import datetime
 import sys
+import os
 import json
 import paho.mqtt.client as mqtt
 import asyncio
@@ -12,6 +13,15 @@ from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKe
 import pgpy
 username="ollie"
 msgThread="test/wedtest"
+
+my_private_key_file="my-private-key/myprikey.asc"
+friendPubKeys = []
+priKey, _ = pgpy.PGPKey.from_file(my_private_key_file)
+#read in each file in the folder friend-public-key and store them in a list
+for files in os.listdir("friend-public-key"):
+    if files.endswith(".asc"):
+        temp, _ =pgpy.PGPKey.from_file(files)
+        friendPubKeys.append(temp)
 
 def on_connect(client, userdata, flags, rc):
     #TODO
@@ -59,8 +69,8 @@ client.on_publish = on_publish
 client.tls_set()
 """
 
-PRIVATE_KEY_FILE="testkey-private.txt"
-priKey, _ = pgpy.PGPKey.from_file("testkey-private.txt")
+
+
 
 client.username_pw_set(username="user", password="Jmnb6014")
 
@@ -135,9 +145,18 @@ class  Ui_MainWindow(QMainWindow):
         niceDate = "["+dt_string+"] "
         print(niceDate)
         #self.textBrowser.append(stringMsg)
+        cipher = pgpy.constants.SymmetricKeyAlgorithm.AES256
+        sessionkey = cipher.gen_key()
         stringMsg = pgpy.PGPMessage.new(niceDate+username+": "+stringMsg)
-        encryptedMsg = str(priKey.pubkey.encrypt(stringMsg))
-        client.publish(msgThread, encryptedMsg, qos=2, retain=False)
+        for i in range(len(friendPubKeys)):
+            if(i==0):
+                enc_msg = friendPubKeys[i].encrypt(stringMsg, cipher=cipher, sessionkey=sessionkey)
+            else:
+                enc_msg = friendPubKeys[i].encrypt(enc_msg, cipher=cipher, sessionkey=sessionkey)
+
+        enc_msg = priKey.pubkey.encrypt(enc_msg, cipher=cipher, sessionkey=sessionkey)
+        del sessionkey
+        client.publish(msgThread, enc_msg, qos=2, retain=False)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
