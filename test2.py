@@ -11,8 +11,8 @@ import paho.mqtt.client as mqtt
 import asyncio
 from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm
 import pgpy
-username="ollie"
-msgThread="test/wedtest"
+username="ollie2"
+msgThread="test/thur2test"
 
 my_private_key_file="my-private-key/myprikey.asc"
 friendPubKeys = []
