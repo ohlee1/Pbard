@@ -62,6 +62,10 @@ class Ui_MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         print("Program home screen closed")
+        try:
+            self.newChatW.close()
+        except:
+            pass
 
     def openNewChatWindow(self,MainWindow):
         try:
