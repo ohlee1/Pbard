@@ -63,7 +63,7 @@ class Ui_newChatWindow(QMainWindow):
         self.count=0
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     #MainWindow = QtWidgets.QMainWindow()
     MainWindow = Ui_newChatWindow()
     MainWindow.setupUi(MainWindow)
