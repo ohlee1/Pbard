@@ -21,6 +21,7 @@ class Ui_newChatWindow(QMainWindow):
         newChatWindow.setObjectName("newChatWindow")
         newChatWindow.resize(651, 606)
         self.count=1
+        self.keyFilesList=[]
         #generate random string of 10 digits to stick on the end of a topic name to make it unique
         self.topicExtension = ''.join(random.choices(string.digits, k=12))
         self.centralwidget = QtWidgets.QWidget(newChatWindow)
@@ -88,7 +89,11 @@ class Ui_newChatWindow(QMainWindow):
             directory=self.currentDir,
             filter=fileFilter
         )
-        
+        #append list of files to key files list
+        self.keyFilesList.extend(self.keyFiles[0])
+        #convert to dict and back to remove duplicates
+        self.keyFilesList = list(dict.fromkeys(self.keyFilesList))
+        #print(self.keyFilesList)
 
     def startNewChatButton(self):
         #new directory will but in the all_chats directory and will have the generated name
@@ -96,8 +101,8 @@ class Ui_newChatWindow(QMainWindow):
         #make the new directory
         os.mkdir(newKeyFolder)
         #iterate through list (first tuple item is a list) and copy the files into the new folder
-        for key in self.keyFiles[0]:
-            print(key)
+        for key in self.keyFilesList:
+            #print(key)
             shutil.copy(key, newKeyFolder)
         #create new object
         self.chatW = Ui_chatWindow()
