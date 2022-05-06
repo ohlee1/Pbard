@@ -11,8 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-import sys
-import random, string
+import random, string, sys, os, shutil
 
 
 
@@ -31,19 +30,19 @@ class Ui_newChatWindow(QMainWindow):
         self.widget.setObjectName("widget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.widget)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.newChatStartButton = QtWidgets.QPushButton(self.widget)
+        self.newChatStartButton = QtWidgets.QPushButton(self.widget, clicked=lambda: self.startNewChatButton())
         self.newChatStartButton.setObjectName("newChatStartButton")
         self.gridLayout_2.addWidget(self.newChatStartButton, 5, 0, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.widget)
         self.label_3.setObjectName("label_3")
         self.gridLayout_2.addWidget(self.label_3, 2, 0, 1, 1)
-        self.lineEdit_2 = QtWidgets.QLineEdit(self.widget)
-        self.lineEdit_2.setObjectName("lineEdit_2")
-        self.gridLayout_2.addWidget(self.lineEdit_2, 3, 0, 1, 1)
+        self.uniqueTopicName = QtWidgets.QLineEdit(self.widget)
+        self.uniqueTopicName.setObjectName("uniqueTopicName")
+        self.gridLayout_2.addWidget(self.uniqueTopicName, 3, 0, 1, 1)
         self.label = QtWidgets.QLabel(self.widget)
         self.label.setObjectName("label")
         self.gridLayout_2.addWidget(self.label, 0, 0, 1, 1)
-        self.newChatImportButton = QtWidgets.QPushButton(self.widget)
+        self.newChatImportButton = QtWidgets.QPushButton(self.widget, clicked=lambda: self.importKeysButton())
         self.newChatImportButton.setObjectName("newChatImportButton")
         self.gridLayout_2.addWidget(self.newChatImportButton, 4, 0, 1, 1)
         self.newChatName = QtWidgets.QLineEdit(self.widget)
@@ -56,6 +55,9 @@ class Ui_newChatWindow(QMainWindow):
 
         self.retranslateUi(newChatWindow)
         QtCore.QMetaObject.connectSlotsByName(newChatWindow)
+
+        #get the current directory and store it
+        self.currentDir = os.getcwd()
 
     def retranslateUi(self, newChatWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -72,7 +74,33 @@ class Ui_newChatWindow(QMainWindow):
     #when text is entered into the name box, copy it into the unique name box and append the topic extension to make it unique
     def updateUniqueName(self):
         temp = self.newChatName.text()
-        self.lineEdit_2.setText(temp+"-"+self.topicExtension)
+        self.uniqueTopicName.setText(temp+"-"+self.topicExtension)
+
+    def importKeysButton(self):
+        #specify which file types to import
+        fileFilter = 'Key File (*.asc)'
+        #open window in current directory and ask user to select the public key files to import
+        #self.keyFiles will be a tuple where the first item is a list of strings of the locations of the files, and the second item is the fileFilter variable
+        self.keyFiles = QFileDialog.getOpenFileNames(
+            parent=self,
+            caption="Select key file(s)",
+            directory=self.currentDir,
+            filter=fileFilter
+        )
+        
+
+    def startNewChatButton(self):
+        #new directory will but in the all_chats directory and will have the generated name
+        newKeyFolder = self.currentDir+"/all_chats/"+self.uniqueTopicName.text()
+        #make the new directory
+        os.mkdir(newKeyFolder)
+        #iterate through list (first tuple item is a list) and copy the files into the new folder
+        for key in self.keyFiles[0]:
+            print(key)
+            shutil.copy(key, newKeyFolder)
+        #add code to open chat window and close this one
+        #maybe add code to create a json file with details??
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
