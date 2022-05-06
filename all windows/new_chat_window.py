@@ -12,12 +12,17 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import sys
+import random, string
+
+
 
 class Ui_newChatWindow(QMainWindow):
     def setupUi(self, newChatWindow):
         newChatWindow.setObjectName("newChatWindow")
         newChatWindow.resize(651, 606)
         self.count=1
+        #generate random string of 10 digits to stick on the end of a topic name to make it unique
+        self.topicExtension = ''.join(random.choices(string.digits, k=12))
         self.centralwidget = QtWidgets.QWidget(newChatWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -26,9 +31,9 @@ class Ui_newChatWindow(QMainWindow):
         self.widget.setObjectName("widget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.widget)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.newChartStartButton = QtWidgets.QPushButton(self.widget)
-        self.newChartStartButton.setObjectName("newChartStartButton")
-        self.gridLayout_2.addWidget(self.newChartStartButton, 5, 0, 1, 1)
+        self.newChatStartButton = QtWidgets.QPushButton(self.widget)
+        self.newChatStartButton.setObjectName("newChatStartButton")
+        self.gridLayout_2.addWidget(self.newChatStartButton, 5, 0, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.widget)
         self.label_3.setObjectName("label_3")
         self.gridLayout_2.addWidget(self.label_3, 2, 0, 1, 1)
@@ -43,6 +48,8 @@ class Ui_newChatWindow(QMainWindow):
         self.gridLayout_2.addWidget(self.newChatImportButton, 4, 0, 1, 1)
         self.newChatName = QtWidgets.QLineEdit(self.widget)
         self.newChatName.setObjectName("newChatName")
+        #as name is inputed mirror it to below box
+        self.newChatName.textChanged.connect(self.updateUniqueName)
         self.gridLayout_2.addWidget(self.newChatName, 1, 0, 1, 1)
         self.gridLayout.addWidget(self.widget, 0, 0, 1, 1, QtCore.Qt.AlignTop)
         newChatWindow.setCentralWidget(self.centralwidget)
@@ -53,7 +60,7 @@ class Ui_newChatWindow(QMainWindow):
     def retranslateUi(self, newChatWindow):
         _translate = QtCore.QCoreApplication.translate
         newChatWindow.setWindowTitle(_translate("newChatWindow", "MainWindow"))
-        self.newChartStartButton.setText(_translate("newChatWindow", "Start New Chat"))
+        self.newChatStartButton.setText(_translate("newChatWindow", "Start New Chat"))
         self.label_3.setText(_translate("newChatWindow", "Unique thread name"))
         self.label.setText(_translate("newChatWindow", "Enter name of chat"))
         self.newChatImportButton.setText(_translate("newChatWindow", "Import Friends Public Keys"))
@@ -61,6 +68,11 @@ class Ui_newChatWindow(QMainWindow):
     def closeEvent(self, event):
         print("New chat window closed")
         self.count=0
+
+    #when text is entered into the name box, copy it into the unique name box and append the topic extension to make it unique
+    def updateUniqueName(self):
+        temp = self.newChatName.text()
+        self.lineEdit_2.setText(temp+"-"+self.topicExtension)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
