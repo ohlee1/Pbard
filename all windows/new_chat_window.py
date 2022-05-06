@@ -11,6 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from chat_window import Ui_chatWindow
 import random, string, sys, os, shutil
 
 
@@ -98,8 +99,16 @@ class Ui_newChatWindow(QMainWindow):
         for key in self.keyFiles[0]:
             print(key)
             shutil.copy(key, newKeyFolder)
-        #add code to open chat window and close this one
+        #create new object
+        self.chatW = Ui_chatWindow()
+        #call setup function inside the object
+        self.chatW.setupUi(self.chatW)
+        #pass keyfolder name
+        self.chatW.setKeyFolder(newKeyFolder)
+        #show the object
+        self.chatW.show()
         #maybe add code to create a json file with details??
+        self.close()
 
 
 if __name__ == "__main__":
