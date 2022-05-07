@@ -78,13 +78,13 @@ class Ui_MainWindow(QMainWindow):
         #attempt to check if the object has been instantiated
         #if it doesn't exist, go to except and make it
         try:
-            #check if the object exists and if the counter inside is greater than 0
-            #counter will be set to 1 when instantiated and 0 when the window is closed
+            #check if the object exists and if it's currently open
+            #isOpen will be set to true when instatiated and false when closed
             if self.newChatW and self.newChatW.isOpen:
-                #if window is open and exists and counter is greater than 0, don't open a new one
+                #if window is open and exists and isOpen is true, don't open a new one
                 print("new chat window alreay open")
             else:
-                #if window is closed and exists but counter is 0 or less, open a new one
+                #if window is closed and exists but isOpen is false, open a new one
                 self.newChatW = Ui_newChatWindow()
                 self.newChatW.setupUi(self.newChatW)
                 self.newChatW.show()
@@ -102,13 +102,13 @@ class Ui_MainWindow(QMainWindow):
         #attempt to check if the object has been instantiated
         #if it doesn't exist, go to except and make it
         try:
-            #check if the object exists and if the counter inside is greater than 0
-            #counter will be set to 1 when instantiated and 0 when the window is closed
+            #check if the object exists and if it's currently open
+            #isOpen will be set to true when instatiated and false when closed
             if self.existingChatW and self.existingChatW.isOpen:
-                #if window is open and exists and counter is greater than 0, don't open a new one
+                #if window is open and exists and isOpen is true, don't open a new one
                 print("existing chat window alreay open")
             else:
-                #if window is closed and exists but counter is 0 or less, open a new one
+                #if window is closed and exists but isOpen is false, open a new one
                 self.existingChatW = Ui_openChatWindow()
                 self.existingChatW.setupUi(self.existingChatW)
                 self.existingChatW.show()
@@ -126,13 +126,13 @@ class Ui_MainWindow(QMainWindow):
         #attempt to check if the object has been instantiated
         #if it doesn't exist, go to except and make it
         try:
-            #check if the object exists and if the counter inside is greater than 0
-            #counter will be set to 1 when instantiated and 0 when the window is closed
+            #check if the object exists and if it's currently open
+            #isOpen will be set to true when instatiated and false when closed
             if self.keyGenW and self.keyGenW.isOpen:
-                #if window is open and exists and counter is greater than 0, don't open a new one
+                #if window is open and exists and isOpen is true, don't open a new one
                 print("existing chat window alreay open")
             else:
-                #if window is closed and exists but counter is 0 or less, open a new one
+                #if window is closed and exists but isOpen is false, open a new one
                 self.keyGenW = Ui_keyGenWindow()
                 self.keyGenW.setupUi(self.keyGenW)
                 self.keyGenW.show()

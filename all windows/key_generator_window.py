@@ -13,7 +13,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm 
 import sys, pgpy
-key = pgpy.PGPKey.new(PubKeyAlgorithm.RSAEncryptOrSign, 4096)
+
 
 class Ui_keyGenWindow(QMainWindow):
     def setupUi(self, keyGenWindow):
@@ -70,6 +70,7 @@ class Ui_keyGenWindow(QMainWindow):
     def generateKeyButton(self):
         #check to make sure username has been inputted, other two options aren't necessary
         if(len(self.newKeyName.text())>0):
+            key = pgpy.PGPKey.new(PubKeyAlgorithm.RSAEncryptOrSign, 4096)
             username = self.newKeyName.text()
             email = self.newKeyEmail.text()
             comment = self.newKeyComment.text()
