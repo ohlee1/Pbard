@@ -64,6 +64,8 @@ class Ui_newChatWindow(QMainWindow):
         #get the current directory and store it
         self.currentDir = os.getcwd()
 
+        
+
     def retranslateUi(self, newChatWindow):
         _translate = QtCore.QCoreApplication.translate
         newChatWindow.setWindowTitle(_translate("newChatWindow", "MainWindow"))
@@ -72,7 +74,7 @@ class Ui_newChatWindow(QMainWindow):
         self.label.setText(_translate("newChatWindow", "Enter name of chat"))
         self.newChatImportButton.setText(_translate("newChatWindow", "Import Friends Public Keys"))
         self.label_2.setText(_translate("newChatWindow", "Warning! Key files with the same name will be overwritten!"))
-        
+
     def closeEvent(self, event):
         print("New chat window closed")
         self.isOpen=False

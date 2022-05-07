@@ -13,6 +13,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import sys, os, shutil
 from chat_window import Ui_chatWindow
+from confirmation_window import Ui_Dialog
+from time import sleep
 
 class Ui_openChatWindow(QMainWindow):
     def setupUi(self, openChatWindow):
@@ -45,11 +47,12 @@ class Ui_openChatWindow(QMainWindow):
         self.gridLayout_2.addWidget(self.label_2, 4, 0, 1, 1)
         self.gridLayout.addWidget(self.widget, 0, 0, 1, 1, QtCore.Qt.AlignTop)
         openChatWindow.setCentralWidget(self.centralwidget)
+        self.window=openChatWindow
 
         self.retranslateUi(openChatWindow)
         QtCore.QMetaObject.connectSlotsByName(openChatWindow)
 
-        #code to get list of chats and display in combo box
+        #code to get current directory and store potential paths
         self.currentDir = os.getcwd()
         path1 = self.currentDir+"/all_chats/"
         path2 = self.currentDir+"/all_windows/all_chats/"
@@ -62,16 +65,27 @@ class Ui_openChatWindow(QMainWindow):
             self.chatDir = path2
         else:
             print("Error, no folder found for chats")
-            self.close()
-        
-        self.chatList = os.listdir(self.chatDir)
-        
-        print(self.chatList)
+            
+        #try to get the chat list and put into the combo box
+        #if it fails open an alert window
+        try:
+            self.chatList = os.listdir(self.chatDir)
+            
+            print(self.chatList)
 
-        self.openChatComboBox = QtWidgets.QComboBox(self.widget)
-        self.openChatComboBox.setObjectName("openChatComboBox")
-        self.openChatComboBox.addItems(self.chatList)
-        self.gridLayout_2.addWidget(self.openChatComboBox, 1, 0, 1, 1)
+            self.openChatComboBox = QtWidgets.QComboBox(self.widget)
+            self.openChatComboBox.setObjectName("openChatComboBox")
+            self.openChatComboBox.addItems(self.chatList)
+            self.gridLayout_2.addWidget(self.openChatComboBox, 1, 0, 1, 1)
+        except:
+            #open confirmation window
+            self.newConfW = Ui_Dialog()
+            #call setup function inside the object
+            self.newConfW.setupUi(self.newConfW)
+            #send the window object and text into confirmation window
+            self.newConfW.receiver(self.window, "Error, no chat folder found")
+            #show the object
+            self.newConfW.show()
 
     def retranslateUi(self, openChatWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -84,6 +98,10 @@ class Ui_openChatWindow(QMainWindow):
     def closeEvent(self, event):
         print("open existing chat window closed")
         self.isOpen=False
+        try:
+            self.newConfW.close()
+        except:
+            pass
 
     def openChatButton(self):
         selection = self.chatList.index(self.openChatComboBox.currentText())

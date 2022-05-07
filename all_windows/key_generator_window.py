@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm 
-import sys, pgpy
+import sys, pgpy, os
 from confirmation_window import Ui_Dialog
 
 class Ui_keyGenWindow(QMainWindow):
@@ -57,6 +57,28 @@ class Ui_keyGenWindow(QMainWindow):
         self.retranslateUi(keyGenWindow)
         QtCore.QMetaObject.connectSlotsByName(keyGenWindow)
 
+        #code to get current directory and store potential paths
+        self.currentDir = os.getcwd()
+        path1 = self.currentDir+"/my-keys/"
+        path2 = self.currentDir+"/all_windows/my-keys/"
+
+        #directory will depend on whether program has been launched from the py file or the bat/bash file
+        #check if directory exists, returns a boolean
+        if(os.path.isdir(path1)):
+            self.keyDir = path1
+        elif(os.path.isdir(path2)):
+            self.keyDir = path2
+        else:
+            print("Error, no folder found for chats")
+            #open confirmation window
+            self.newConfW = Ui_Dialog()
+            #call setup function inside the object
+            self.newConfW.setupUi(self.newConfW)
+            #send the window object and text into confirmation window
+            self.newConfW.receiver(self.window, "Error, no key folder found")
+            #show the object
+            self.newConfW.show()
+
     def retranslateUi(self, keyGenWindow):
         _translate = QtCore.QCoreApplication.translate
         keyGenWindow.setWindowTitle(_translate("keyGenWindow", "MainWindow"))
@@ -87,16 +109,11 @@ class Ui_keyGenWindow(QMainWindow):
             hashes=[HashAlgorithm.SHA256, HashAlgorithm.SHA384, HashAlgorithm.SHA512, HashAlgorithm.SHA224],
             ciphers=[SymmetricKeyAlgorithm.AES256, SymmetricKeyAlgorithm.AES192, SymmetricKeyAlgorithm.AES128],
             compression=[CompressionAlgorithm.ZLIB, CompressionAlgorithm.BZ2, CompressionAlgorithm.ZIP, CompressionAlgorithm.Uncompressed])
-            try:
-                with open("my-keys/myprikey.asc", "w") as f:
-                    f.write(str(key))
-                with open("my-keys/"+username+"-public.asc", "w") as ff:
-                    ff.write(str(key.pubkey))
-            except:
-                with open("all_windows/my-keys/myprikey.asc", "w") as f:
-                    f.write(str(key))
-                with open("all_windows/my-keys/"+username+"-public.asc", "w") as ff:
-                    ff.write(str(key.pubkey))
+            #write keys out to files
+            with open(keyDir+"myprikey.asc", "w") as f:
+                f.write(str(key))
+            with open(keyDir+username+"-public.asc", "w") as ff:
+                ff.write(str(key.pubkey))
             self.generateNotDone=False
             #open confirmation window
             self.newConfW = Ui_Dialog()
