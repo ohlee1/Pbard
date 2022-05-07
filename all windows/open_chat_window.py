@@ -18,6 +18,7 @@ class Ui_openChatWindow(QMainWindow):
     def setupUi(self, openChatWindow):
         openChatWindow.setObjectName("openChatWindow")
         openChatWindow.resize(800, 600)
+        self.isOpen=True
         self.centralwidget = QtWidgets.QWidget(openChatWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -51,11 +52,15 @@ class Ui_openChatWindow(QMainWindow):
         self.openChatAddKeyButton.setText(_translate("openChatWindow", "Add Another Friend Key"))
         self.openChatStartButton.setText(_translate("openChatWindow", "Open Chat"))
 
+    def closeEvent(self, event):
+        print("open existing chat window closed")
+        self.isOpen=False
+
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     #MainWindow = QtWidgets.QMainWindow()
-    MainWindow = Ui_MainWindow()
+    MainWindow = Ui_openChatWindow()
     MainWindow.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
