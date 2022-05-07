@@ -110,9 +110,9 @@ class Ui_keyGenWindow(QMainWindow):
             ciphers=[SymmetricKeyAlgorithm.AES256, SymmetricKeyAlgorithm.AES192, SymmetricKeyAlgorithm.AES128],
             compression=[CompressionAlgorithm.ZLIB, CompressionAlgorithm.BZ2, CompressionAlgorithm.ZIP, CompressionAlgorithm.Uncompressed])
             #write keys out to files
-            with open(keyDir+"myprikey.asc", "w") as f:
+            with open(self.keyDir+"myprikey.asc", "w") as f:
                 f.write(str(key))
-            with open(keyDir+username+"-public.asc", "w") as ff:
+            with open(self.keyDir+username+"-public.asc", "w") as ff:
                 ff.write(str(key.pubkey))
             self.generateNotDone=False
             #open confirmation window
