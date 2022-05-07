@@ -52,6 +52,9 @@ class Ui_newChatWindow(QMainWindow):
         #as name is inputed mirror it to below box
         self.newChatName.textChanged.connect(self.updateUniqueName)
         self.gridLayout_2.addWidget(self.newChatName, 1, 0, 1, 1)
+        self.label_2 = QtWidgets.QLabel(self.widget)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout_2.addWidget(self.label_2, 6, 0, 1, 1)
         self.gridLayout.addWidget(self.widget, 0, 0, 1, 1, QtCore.Qt.AlignTop)
         newChatWindow.setCentralWidget(self.centralwidget)
 
@@ -68,7 +71,8 @@ class Ui_newChatWindow(QMainWindow):
         self.label_3.setText(_translate("newChatWindow", "Unique thread name"))
         self.label.setText(_translate("newChatWindow", "Enter name of chat"))
         self.newChatImportButton.setText(_translate("newChatWindow", "Import Friends Public Keys"))
-
+        self.label_2.setText(_translate("newChatWindow", "Warning! Key files with the same name will be overwritten!"))
+        
     def closeEvent(self, event):
         print("New chat window closed")
         self.isOpen=False
@@ -103,12 +107,17 @@ class Ui_newChatWindow(QMainWindow):
         #if running from pBard.sh the current directory will be where pBard.sh is, but all_chats is inside all_windows
         try:
             os.mkdir(newKeyFolder)
+            #iterate through list (first tuple item is a list) and copy the files into the new folder
+            for key in self.keyFilesList:
+                #print(key)
+                shutil.copy(key, newKeyFolder)
         except:
             os.mkdir(altNewKeyFolder)
-        #iterate through list (first tuple item is a list) and copy the files into the new folder
-        for key in self.keyFilesList:
-            #print(key)
-            shutil.copy(key, newKeyFolder)
+            #iterate through list (first tuple item is a list) and copy the files into the new folder
+            for key in self.keyFilesList:
+                #print(key)
+                shutil.copy(key, altNewKeyFolder)
+        
         #create new object
         self.chatW = Ui_chatWindow()
         #call setup function inside the object

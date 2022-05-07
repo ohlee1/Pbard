@@ -18,20 +18,6 @@
     <item row="0" column="0" alignment="Qt::AlignTop">
      <widget class="QWidget" name="widget" native="true">
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="5" column="0">
-        <widget class="QPushButton" name="newChartStartButton">
-         <property name="text">
-          <string>Start New Chat</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Unique thread name</string>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="0">
         <widget class="QLineEdit" name="lineEdit_2"/>
        </item>
@@ -51,6 +37,27 @@
        </item>
        <item row="1" column="0">
         <widget class="QLineEdit" name="newChatName"/>
+       </item>
+       <item row="5" column="0">
+        <widget class="QPushButton" name="newChartStartButton">
+         <property name="text">
+          <string>Start New Chat</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Unique thread name</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Warning! Key files with the same name will be overwritten!</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

@@ -18,15 +18,15 @@
     <item row="0" column="0" alignment="Qt::AlignTop">
      <widget class="QWidget" name="widget" native="true">
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="1" column="0">
+        <widget class="QComboBox" name="openChatComboBox"/>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
           <string>Select Chat</string>
          </property>
         </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QComboBox" name="openChatComboBox"/>
        </item>
        <item row="2" column="0">
         <widget class="QPushButton" name="openChatAddKeyButton">
@@ -39,6 +39,13 @@
         <widget class="QPushButton" name="openChatStartButton">
          <property name="text">
           <string>Open Chat</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Warning! Key files with the same name will be overwritten!</string>
          </property>
         </widget>
        </item>
