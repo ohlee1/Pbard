@@ -1,2 +1,2 @@
-#!/bin/sh
-python ./all_windows/home-window.py
+#!/bin/bash
+python3 ./all_windows/home-window.py
