@@ -1,17 +1,39 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from time import sleep
-from datetime import datetime
 import subprocess
 import sys
-import os
-import json
-import paho.mqtt.client as mqtt
-import asyncio
-from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm
-import pgpy
+
+try:
+    from PyQt5 import QtCore, QtGui, QtWidgets
+    from PyQt5.QtWidgets import *
+    from PyQt5.QtCore import *
+    from PyQt5.QtGui import *
+    from time import sleep
+    from datetime import datetime
+    import os
+    import json
+    import paho.mqtt.client as mqtt
+    import asyncio
+    from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm
+    import pgpy
+except ModuleNotFoundError as e:
+    #Subprocess to execute pip command, install modules from requirements text file
+    try:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+        from PyQt5 import QtCore, QtGui, QtWidgets
+        from PyQt5.QtWidgets import *
+        from PyQt5.QtCore import *
+        from PyQt5.QtGui import *
+        from time import sleep
+        from datetime import datetime
+        import os
+        import json
+        import paho.mqtt.client as mqtt
+        import asyncio
+        from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm
+        import pgpy
+    except ModuleNotFoundError as e:
+        print(e)
+        print("Modules unable to be installed, please install manually!\n")
+
 username="ollie2"
 msgThread="test/thur2test"
 
@@ -165,13 +187,7 @@ class  Ui_MainWindow(QMainWindow):
         client.publish(msgThread, encryptedMsg, qos=2, retain=False)
 
 if __name__ == "__main__":
-    try:
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
-    except subprocess.CalledProcessError as e:
-        print("Issue with the call:\n")
-        print(e)
-    except:
-        print("Unknown error installing dependencies")
+        
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = Ui_MainWindow()
     #MainWindow = QtWidgets.QMainWindow() fuck this line never use it
