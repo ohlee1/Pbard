@@ -87,10 +87,16 @@ class Ui_keyGenWindow(QMainWindow):
             hashes=[HashAlgorithm.SHA256, HashAlgorithm.SHA384, HashAlgorithm.SHA512, HashAlgorithm.SHA224],
             ciphers=[SymmetricKeyAlgorithm.AES256, SymmetricKeyAlgorithm.AES192, SymmetricKeyAlgorithm.AES128],
             compression=[CompressionAlgorithm.ZLIB, CompressionAlgorithm.BZ2, CompressionAlgorithm.ZIP, CompressionAlgorithm.Uncompressed])
-            with open("my-keys/myprikey.asc", "w") as f:
-                f.write(str(key))
-            with open("my-keys/"+username+"-public.asc", "w") as ff:
-                ff.write(str(key.pubkey))
+            try:
+                with open("my-keys/myprikey.asc", "w") as f:
+                    f.write(str(key))
+                with open("my-keys/"+username+"-public.asc", "w") as ff:
+                    ff.write(str(key.pubkey))
+            except:
+                with open("all_windows/my-keys/myprikey.asc", "w") as f:
+                    f.write(str(key))
+                with open("all_windows/my-keys/"+username+"-public.asc", "w") as ff:
+                    ff.write(str(key.pubkey))
             self.generateNotDone=False
             #open confirmation window
             self.newConfW = Ui_Dialog()

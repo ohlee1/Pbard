@@ -98,8 +98,13 @@ class Ui_newChatWindow(QMainWindow):
     def startNewChatButton(self):
         #new directory will but in the all_chats directory and will have the generated name
         newKeyFolder = self.currentDir+"/all_chats/"+self.uniqueTopicName.text()
+        altNewKeyFolder = self.currentDir+"/all_windows/all_chats/"+self.uniqueTopicName.text()
         #make the new directory
-        os.mkdir(newKeyFolder)
+        #if running from pBard.sh the current directory will be where pBard.sh is, but all_chats is inside all_windows
+        try:
+            os.mkdir(newKeyFolder)
+        except:
+            os.mkdir(altNewKeyFolder)
         #iterate through list (first tuple item is a list) and copy the files into the new folder
         for key in self.keyFilesList:
             #print(key)
