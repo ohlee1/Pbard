@@ -69,7 +69,7 @@ class Ui_keyGenWindow(QMainWindow):
         elif(os.path.isdir(path2)):
             self.keyDir = path2
         else:
-            print("Error, no folder found for chats")
+            print("Error, no folder found for keys")
             #open confirmation window
             self.newConfW = Ui_Dialog()
             #call setup function inside the object
