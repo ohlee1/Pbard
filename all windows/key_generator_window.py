@@ -11,8 +11,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-import sys
-
+from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm 
+import sys, pgpy
+key = pgpy.PGPKey.new(PubKeyAlgorithm.RSAEncryptOrSign, 4096)
 
 class Ui_keyGenWindow(QMainWindow):
     def setupUi(self, keyGenWindow):
@@ -45,7 +46,7 @@ class Ui_keyGenWindow(QMainWindow):
         self.newKeyComment = QtWidgets.QLineEdit(self.widget)
         self.newKeyComment.setObjectName("newKeyComment")
         self.gridLayout_2.addWidget(self.newKeyComment, 2, 1, 1, 1)
-        self.newKeyButton = QtWidgets.QPushButton(self.widget)
+        self.newKeyButton = QtWidgets.QPushButton(self.widget, clicked=lambda: self.generateKeyButton())
         self.newKeyButton.setObjectName("newKeyButton")
         self.gridLayout_2.addWidget(self.newKeyButton, 3, 1, 1, 1)
         self.gridLayout.addWidget(self.widget, 0, 0, 1, 1, QtCore.Qt.AlignTop)
@@ -66,6 +67,23 @@ class Ui_keyGenWindow(QMainWindow):
         print("key gen window closed")
         self.count=0
 
+    def generateKeyButton(self):
+        #check to make sure username has been inputted, other two options aren't necessary
+        if(len(self.newKeyName.text())>0):
+            username = self.newKeyName.text()
+            email = self.newKeyEmail.text()
+            comment = self.newKeyComment.text()
+            uid = pgpy.PGPUID.new(username, comment=comment, email=email)
+            key.add_uid(uid, usage={KeyFlags.Sign, KeyFlags.EncryptCommunications, KeyFlags.EncryptStorage},
+            hashes=[HashAlgorithm.SHA256, HashAlgorithm.SHA384, HashAlgorithm.SHA512, HashAlgorithm.SHA224],
+            ciphers=[SymmetricKeyAlgorithm.AES256, SymmetricKeyAlgorithm.AES192, SymmetricKeyAlgorithm.AES128],
+            compression=[CompressionAlgorithm.ZLIB, CompressionAlgorithm.BZ2, CompressionAlgorithm.ZIP, CompressionAlgorithm.Uncompressed])
+            with open("my-keys/myprikey.asc", "w") as f:
+                f.write(str(key))
+            with open("my-keys/"+username+"-public.asc", "w") as ff:
+                ff.write(str(key.pubkey))
+        else:
+            print("Please enter a username")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
