@@ -57,14 +57,33 @@ class Ui_newChatWindow(QMainWindow):
         self.gridLayout_2.addWidget(self.label_2, 6, 0, 1, 1)
         self.gridLayout.addWidget(self.widget, 0, 0, 1, 1, QtCore.Qt.AlignTop)
         newChatWindow.setCentralWidget(self.centralwidget)
+        self.window=newChatWindow
 
         self.retranslateUi(newChatWindow)
         QtCore.QMetaObject.connectSlotsByName(newChatWindow)
 
         #get the current directory and store it
         self.currentDir = os.getcwd()
+        path1 = self.currentDir+"/all_chats/"
+        path2 = self.currentDir+"/all_windows/all_chats/"
 
-        
+        #directory will depend on whether program has been launched from the py file or the bat/bash file
+        #check if directory exists, returns a boolean
+        if(os.path.isdir(path1)):
+            self.chatDir = path1
+        elif(os.path.isdir(path2)):
+            self.chatDir = path2
+        else:
+            print("Error, no folder found for chats")
+            #open confirmation window
+            self.newConfW = Ui_Dialog()
+            #call setup function inside the object
+            self.newConfW.setupUi(self.newConfW)
+            #send the window object and text into confirmation window
+            self.newConfW.receiver(self.window, "Error, no folder found for chats")
+            #show the object
+            self.newConfW.show()
+
 
     def retranslateUi(self, newChatWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -107,18 +126,12 @@ class Ui_newChatWindow(QMainWindow):
         altNewKeyFolder = self.currentDir+"/all_windows/all_chats/"+self.uniqueTopicName.text()
         #make the new directory
         #if running from pBard.sh the current directory will be where pBard.sh is, but all_chats is inside all_windows
-        try:
-            os.mkdir(newKeyFolder)
-            #iterate through list (first tuple item is a list) and copy the files into the new folder
-            for key in self.keyFilesList:
-                #print(key)
-                shutil.copy(key, newKeyFolder)
-        except:
-            os.mkdir(altNewKeyFolder)
-            #iterate through list (first tuple item is a list) and copy the files into the new folder
-            for key in self.keyFilesList:
-                #print(key)
-                shutil.copy(key, altNewKeyFolder)
+        os.mkdir(newKeyFolder)
+        #iterate through list and copy the files into the new folder
+        for key in self.keyFilesList:
+            #print(key)
+            shutil.copy(key, newKeyFolder)
+        
         
         #create new object
         self.chatW = Ui_chatWindow()
