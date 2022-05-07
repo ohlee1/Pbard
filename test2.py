@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from time import sleep
 from datetime import datetime
+import subprocess
 import sys
 import os
 import json
@@ -164,6 +165,13 @@ class  Ui_MainWindow(QMainWindow):
         client.publish(msgThread, encryptedMsg, qos=2, retain=False)
 
 if __name__ == "__main__":
+    try:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+    except subprocess.CalledProcessError as e:
+        print("Issue with the call:\n")
+        print(e)
+    except:
+        print("Unknown error installing dependencies")
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = Ui_MainWindow()
     #MainWindow = QtWidgets.QMainWindow() fuck this line never use it
