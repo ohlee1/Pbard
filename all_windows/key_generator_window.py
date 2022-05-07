@@ -13,13 +13,14 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm 
 import sys, pgpy
-
+from confirmation_window import Ui_Dialog
 
 class Ui_keyGenWindow(QMainWindow):
     def setupUi(self, keyGenWindow):
         keyGenWindow.setObjectName("keyGenWindow")
         keyGenWindow.resize(800, 600)
         self.isOpen=True
+        self.generateNotDone=True
         self.centralwidget = QtWidgets.QWidget(keyGenWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -51,6 +52,7 @@ class Ui_keyGenWindow(QMainWindow):
         self.gridLayout_2.addWidget(self.newKeyButton, 3, 1, 1, 1)
         self.gridLayout.addWidget(self.widget, 0, 0, 1, 1, QtCore.Qt.AlignTop)
         keyGenWindow.setCentralWidget(self.centralwidget)
+        self.window=keyGenWindow
 
         self.retranslateUi(keyGenWindow)
         QtCore.QMetaObject.connectSlotsByName(keyGenWindow)
@@ -66,10 +68,16 @@ class Ui_keyGenWindow(QMainWindow):
     def closeEvent(self, event):
         print("key gen window closed")
         self.isOpen=False
+        try:
+            self.newConfW.close()
+        except:
+            pass
+
 
     def generateKeyButton(self):
         #check to make sure username has been inputted, other two options aren't necessary
-        if(len(self.newKeyName.text())>0):
+        #also check that a key hasn't been generated yet
+        if(len(self.newKeyName.text())>0 and self.generateNotDone):
             key = pgpy.PGPKey.new(PubKeyAlgorithm.RSAEncryptOrSign, 4096)
             username = self.newKeyName.text()
             email = self.newKeyEmail.text()
@@ -83,8 +91,25 @@ class Ui_keyGenWindow(QMainWindow):
                 f.write(str(key))
             with open("my-keys/"+username+"-public.asc", "w") as ff:
                 ff.write(str(key.pubkey))
+            self.generateNotDone=False
+            #open confirmation window
+            self.newConfW = Ui_Dialog()
+            #call setup function inside the object
+            self.newConfW.setupUi(self.newConfW)
+            #send the window object and text into confirmation window
+            self.newConfW.receiver(self.window, "Key Generated Successfully")
+            #show the object
+            self.newConfW.show()
+        #if either no text inputted or key has been generated, go here
         else:
-            print("Please enter a username")
+            #check boolean to see if key has been generated
+            #if it has, tell user and pass
+            if(not self.generateNotDone):
+                print("key has been generated")
+                pass
+            #if key hasn't been generated tell user to enter a username
+            else:
+                print("Please enter a username")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
