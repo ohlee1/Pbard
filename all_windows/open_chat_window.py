@@ -51,14 +51,21 @@ class Ui_openChatWindow(QMainWindow):
 
         #code to get list of chats and display in combo box
         self.currentDir = os.getcwd()
-        self.chatDir = self.currentDir+"/all_chats"
-        self.altChatDir = self.currentDir+"/all_windows/all_chats"
+        path1 = self.currentDir+"/all_chats/"
+        path2 = self.currentDir+"/all_windows/all_chats/"
 
-        try:
-            self.chatList = os.listdir(self.chatDir)
-        except:
-            self.chatList = os.listdir(self.altChatDir)
-
+        #directory will depend on whether program has been launched from the py file or the bat/bash file
+        #check if directory exists, returns a boolean
+        if(os.path.isdir(path1)):
+            self.chatDir = path1
+        elif(os.path.isdir(path2)):
+            self.chatDir = path2
+        else:
+            print("Error, no folder found for chats")
+            self.close()
+        
+        self.chatList = os.listdir(self.chatDir)
+        
         print(self.chatList)
 
         self.openChatComboBox = QtWidgets.QComboBox(self.widget)
@@ -73,7 +80,7 @@ class Ui_openChatWindow(QMainWindow):
         self.openChatAddKeyButton.setText(_translate("openChatWindow", "Add Another Friend Key"))
         self.openChatStartButton.setText(_translate("openChatWindow", "Open Chat"))
         self.label_2.setText(_translate("openChatWindow", "Warning! Key files with the same name will be overwritten!"))
-        
+
     def closeEvent(self, event):
         print("open existing chat window closed")
         self.isOpen=False
@@ -82,31 +89,23 @@ class Ui_openChatWindow(QMainWindow):
         selection = self.chatList.index(self.openChatComboBox.currentText())
         #print(self.chatList[selection])
         #print(type(self.chatList[selection]))
-        keyFolder = self.currentDir+"/all_chats/"+self.chatList[selection]
-        altKeyFolder = self.currentDir+"/all_windows/all_chats/"+self.chatList[selection]
+        keyFolder = self.chatDir+self.chatList[selection]
+        print(keyFolder)
         #check if any keys in the list
         if self.keyFilesList:
             #if keys present, then move them into the directory
-            try:
-                #iterate through list (first tuple item is a list) and copy the files into the new folder
-                for key in self.keyFilesList:
-                    #print(key)
-                    shutil.copy(key, keyFolder)
-            except:
-                #iterate through list (first tuple item is a list) and copy the files into the new folder
-                for key in self.keyFilesList:
-                    #print(key)
-                    shutil.copy(key, altKeyFolder)
+            #iterate through list and copy the files into the folder
+            for key in self.keyFilesList:
+                #print(key)
+                shutil.copy(key, keyFolder)
+        
 
         #create new object
         self.chatW = Ui_chatWindow()
         #call setup function inside the object
         self.chatW.setupUi(self.chatW)
         #pass keyfolder name
-        try:
-            self.chatW.setKeyFolder(keyFolder)
-        except:
-            self.chatW.setKeyFolder(altKeyFolder)
+        self.chatW.setKeyFolder(keyFolder)
         #show the object
         self.chatW.show()
         #maybe add code to create a json file with details??
@@ -128,7 +127,7 @@ class Ui_openChatWindow(QMainWindow):
         self.keyFilesList.extend(self.keyFiles[0])
         #convert to dict and back to remove duplicates
         self.keyFilesList = list(dict.fromkeys(self.keyFilesList))
-        #print(self.keyFilesList)
+        print(self.keyFilesList)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
