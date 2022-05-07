@@ -18,7 +18,7 @@ class Ui_openChatWindow(QMainWindow):
     def setupUi(self, openChatWindow):
         openChatWindow.setObjectName("openChatWindow")
         openChatWindow.resize(800, 600)
-        self.count = 1
+        self.isOpen=True
         self.centralwidget = QtWidgets.QWidget(openChatWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -54,7 +54,7 @@ class Ui_openChatWindow(QMainWindow):
 
     def closeEvent(self, event):
         print("open existing chat window closed")
-        self.count=0
+        self.isOpen=False
 
 
 if __name__ == "__main__":

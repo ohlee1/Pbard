@@ -19,7 +19,7 @@ class Ui_keyGenWindow(QMainWindow):
     def setupUi(self, keyGenWindow):
         keyGenWindow.setObjectName("keyGenWindow")
         keyGenWindow.resize(800, 600)
-        self.count=1
+        self.isOpen=True
         self.centralwidget = QtWidgets.QWidget(keyGenWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -65,7 +65,7 @@ class Ui_keyGenWindow(QMainWindow):
 
     def closeEvent(self, event):
         print("key gen window closed")
-        self.count=0
+        self.isOpen=False
 
     def generateKeyButton(self):
         #check to make sure username has been inputted, other two options aren't necessary

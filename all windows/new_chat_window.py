@@ -20,7 +20,7 @@ class Ui_newChatWindow(QMainWindow):
     def setupUi(self, newChatWindow):
         newChatWindow.setObjectName("newChatWindow")
         newChatWindow.resize(651, 606)
-        self.count=1
+        self.isOpen=True
         self.keyFilesList=[]
         #generate random string of 10 digits to stick on the end of a topic name to make it unique
         self.topicExtension = ''.join(random.choices(string.digits, k=12))
@@ -71,7 +71,7 @@ class Ui_newChatWindow(QMainWindow):
 
     def closeEvent(self, event):
         print("New chat window closed")
-        self.count=0
+        self.isOpen=False
 
     #when text is entered into the name box, copy it into the unique name box and append the topic extension to make it unique
     def updateUniqueName(self):
