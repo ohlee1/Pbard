@@ -1,28 +1,43 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'home-window.ui'
-#
-# Created by: PyQt5 UI code generator 5.14.1
-#
-# WARNING! All changes made in this file will be lost!
-
-
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+import subprocess
 import sys
-from new_chat_window import Ui_newChatWindow
-from open_chat_window import Ui_openChatWindow
-from key_generator_window import Ui_keyGenWindow
-windowList = []
+
+#attempt to import all the modules
+try:
+    from PyQt5 import QtCore, QtGui, QtWidgets
+    from PyQt5.QtWidgets import *
+    from PyQt5.QtCore import *
+    from PyQt5.QtGui import *
+    from new_chat_window import Ui_newChatWindow
+    from open_chat_window import Ui_openChatWindow
+    from key_generator_window import Ui_keyGenWindow
+    import pgpy
+    import paho.mqtt.client as mqtt
+#if it fails (pgpy, pyqt5, or paho mqtt not installed) then install them and attempt to import again
+except ModuleNotFoundError as e:
+    #Subprocess to execute pip command, install modules from requirements text file
+    try:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+        from PyQt5 import QtCore, QtGui, QtWidgets
+        from PyQt5.QtWidgets import *
+        from PyQt5.QtCore import *
+        from PyQt5.QtGui import *
+        from new_chat_window import Ui_newChatWindow
+        from open_chat_window import Ui_openChatWindow
+        from key_generator_window import Ui_keyGenWindow
+        import pgpy
+        import paho.mqtt.client as mqtt
+#if import still fails alert user
+    except ModuleNotFoundError as f:
+        print(f)
+        print("Modules unable to be installed, please install manually!\n")
+
 
 class Ui_MainWindow(QMainWindow):
     def setupUi(self, MainWindow):
         #qt designer code begin
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
-        self.count=0
+        self.windowList = []
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -70,7 +85,7 @@ class Ui_MainWindow(QMainWindow):
     #close event, attempts to close the newchatw object when the main window is closed
     def closeEvent(self, event):
         print("Program home screen closed")
-        for obj in windowList:
+        for obj in self.windowList:
             obj.close()
 
     #when new chat window button is pressed, execute this
@@ -88,7 +103,7 @@ class Ui_MainWindow(QMainWindow):
                 self.newChatW = Ui_newChatWindow()
                 self.newChatW.setupUi(self.newChatW)
                 self.newChatW.show()
-                windowList.append(self.newChatW)
+                self.windowList.append(self.newChatW)
         except:
             #create new object
             self.newChatW = Ui_newChatWindow()
@@ -96,7 +111,7 @@ class Ui_MainWindow(QMainWindow):
             self.newChatW.setupUi(self.newChatW)
             #show the object
             self.newChatW.show()
-            windowList.append(self.newChatW)
+            self.windowList.append(self.newChatW)
 
     def openExistingChatWindow(self,MainWindow):
         #attempt to check if the object has been instantiated
@@ -112,7 +127,7 @@ class Ui_MainWindow(QMainWindow):
                 self.existingChatW = Ui_openChatWindow()
                 self.existingChatW.setupUi(self.existingChatW)
                 self.existingChatW.show()
-                windowList.append(self.existingChatW)
+                self.windowList.append(self.existingChatW)
         except:
             #create new object
             self.existingChatW = Ui_openChatWindow()
@@ -120,7 +135,7 @@ class Ui_MainWindow(QMainWindow):
             self.existingChatW.setupUi(self.existingChatW)
             #show the object
             self.existingChatW.show()
-            windowList.append(self.existingChatW)
+            self.windowList.append(self.existingChatW)
 
     def openKeyGeneratorWindow(self,MainWindow):
         #attempt to check if the object has been instantiated
@@ -136,7 +151,7 @@ class Ui_MainWindow(QMainWindow):
                 self.keyGenW = Ui_keyGenWindow()
                 self.keyGenW.setupUi(self.keyGenW)
                 self.keyGenW.show()
-                windowList.append(self.keyGenW)
+                self.windowList.append(self.keyGenW)
         except:
             #create new object
             self.keyGenW = Ui_keyGenWindow()
@@ -144,7 +159,7 @@ class Ui_MainWindow(QMainWindow):
             self.keyGenW.setupUi(self.keyGenW)
             #show the object
             self.keyGenW.show()
-            windowList.append(self.keyGenW)
+            self.windowList.append(self.keyGenW)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
