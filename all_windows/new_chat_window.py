@@ -152,7 +152,7 @@ class Ui_newChatWindow(QMainWindow):
         #call setup function inside the object
         self.chatW.setupUi(self.chatW)
         #pass keyfolder name
-        self.chatW.setKeyFolder(newKeyFolder)
+        self.chatW.setKeyFolderAndSetupKeys(newKeyFolder,self.currentDir)
         #show the object
         self.chatW.show()
         #maybe add code to create a json file with details??

@@ -61,8 +61,10 @@ class Ui_openChatWindow(QMainWindow):
         #check if directory exists, returns a boolean
         if(os.path.isdir(path1)):
             self.chatDir = path1
+            self.currentDir = self.currentDir+"/"
         elif(os.path.isdir(path2)):
             self.chatDir = path2
+            self.currentDir = self.currentDir+"/all_windows/"
         else:
             print("Error, no folder found for chats")
             
@@ -123,7 +125,7 @@ class Ui_openChatWindow(QMainWindow):
         #call setup function inside the object
         self.chatW.setupUi(self.chatW)
         #pass keyfolder name
-        self.chatW.setKeyFolder(keyFolder)
+        self.chatW.setKeyFolderAndSetupKeys(keyFolder, self.currentDir)
         #show the object
         self.chatW.show()
         #maybe add code to create a json file with details??
