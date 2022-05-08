@@ -12,8 +12,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from chat_window import Ui_chatWindow
-import random, string, sys, os, shutil
-
+import random, string, sys, os, shutil, pgpy
 
 
 class Ui_newChatWindow(QMainWindow):
@@ -71,8 +70,10 @@ class Ui_newChatWindow(QMainWindow):
         #check if directory exists, returns a boolean
         if(os.path.isdir(path1)):
             self.chatDir = path1
+            self.currentDir = self.currentDir+"/"
         elif(os.path.isdir(path2)):
             self.chatDir = path2
+            self.currentDir = self.currentDir+"/all_windows/"
         else:
             print("Error, no folder found for chats")
             #open confirmation window
@@ -83,6 +84,8 @@ class Ui_newChatWindow(QMainWindow):
             self.newConfW.receiver(self.window, "Error, no folder found for chats")
             #show the object
             self.newConfW.show()
+        #get my private key and store it
+        self.priKey, _ = pgpy.PGPKey.from_file(self.currentDir+"my-keys/myprikey.asc")
 
 
     def retranslateUi(self, newChatWindow):
@@ -130,7 +133,19 @@ class Ui_newChatWindow(QMainWindow):
         for key in self.keyFilesList:
             #print(key)
             shutil.copy(key, newKeyFolder)
-        
+        #generate random string of numbers to use to make unique username
+        self.usernameExtension = ''.join(random.choices(string.digits, k=12))
+        #grab username from private key file
+        keyUsername = self.priKey.userids[0].name
+        #append numbers to username
+        self.MQTTUsername = keyUsername+"-"+self.usernameExtension
+        #write out server details and MQTT username to conf file, user can change these if they wish to use their own server
+        with open(newKeyFolder+"/connection_details.conf", "w") as f:
+                f.write("MQTT_username:"+self.MQTTUsername)
+                f.write("\nMQTT_serverIP:"+"52.232.13.39")
+                f.write("\nMQTT_serverPort:"+"1833")
+                f.write("\nMQTT_serverUsername:"+"user")
+                f.write("\nMQTT_serverPassword:"+"Jmnb6014")
         
         #create new object
         self.chatW = Ui_chatWindow()
@@ -142,7 +157,7 @@ class Ui_newChatWindow(QMainWindow):
         self.chatW.show()
         #maybe add code to create a json file with details??
         self.close()
-
+        
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
