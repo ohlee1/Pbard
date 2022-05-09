@@ -1,2 +1,2 @@
-# Pbard
-it's not your pbard, it's our pbard
+# pBard
+it's not your pBard, it's our pBard
