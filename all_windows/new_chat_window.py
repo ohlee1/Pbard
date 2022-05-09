@@ -143,7 +143,7 @@ class Ui_newChatWindow(QMainWindow):
         with open(newKeyFolder+"/connection_details.conf", "w") as f:
                 f.write("MQTT_username:"+self.MQTTUsername)
                 f.write("\nMQTT_serverIP:"+"52.232.13.39")
-                f.write("\nMQTT_serverPort:"+"1833")
+                f.write("\nMQTT_serverPort:"+"1883")
                 f.write("\nMQTT_serverUsername:"+"user")
                 f.write("\nMQTT_serverPassword:"+"Jmnb6014")
         

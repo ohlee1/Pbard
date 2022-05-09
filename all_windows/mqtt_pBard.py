@@ -73,7 +73,8 @@ class chatWinConn():
         self.msgThread= self.MQTT_settings[0]
         self.MQTT_username = self.MQTT_settings[1]
         self.MQTT_serverIP = self.MQTT_settings[2]
-        self.MQTT_serverPort = self.MQTT_settings[3]
+        self.MQTT_serverPort = int(self.MQTT_settings[3])
+        
 
         client = mqtt.Client(client_id=self.MQTT_username, clean_session=False, userdata=None, transport="tcp")
 
@@ -97,8 +98,10 @@ class chatWinConn():
             if files.endswith(".asc"):
                 temp, _ =pgpy.PGPKey.from_file(keyFolder+"/"+files)
                 self.friendPubKeys.append(temp)
-'''
-        client.connect(self.MQTT_serverIP, int(self.MQTT_serverPort), 30)
+'''        
+        
+        #client.connect("52.232.13.39", 1883, 30)
+        client.connect(self.MQTT_serverIP, self.MQTT_serverPort, 30)
         try:
             client.subscribe(self.msgThread, qos=2)
             client.loop_start()
@@ -110,7 +113,7 @@ class chatWinConn():
         print(self.MQTT_settings)
         print(chatWindowob)
 
-    def closeConn():
+    def closeConn(self):
         client.loop_stop()
         client.disconnect()
 

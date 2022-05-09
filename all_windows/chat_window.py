@@ -88,8 +88,9 @@ class Ui_chatWindow(QMainWindow):
         self.gridLayout_6.addLayout(self.horizontalLayout, 1, 0, 1, 1)
         self.chatInputBox = QtWidgets.QLineEdit(self.widget)
         self.chatInputBox.setObjectName("chatInputBox")
+        self.chatInputBox.returnPressed.connect(self.sendMsg)
         self.gridLayout_6.addWidget(self.chatInputBox, 2, 0, 1, 1)
-        self.sendChat = QtWidgets.QPushButton(self.widget)
+        self.sendChat = QtWidgets.QPushButton(self.widget, clicked=lambda: self.sendMsg())
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -197,7 +198,7 @@ class Ui_chatWindow(QMainWindow):
     def sendMsg(self):
         stringMsg = self.chatInputBox.text()
         self.chatInputBox.clear()
-        currentTime = datetime.now()
+        currentTime = datetime.datetime.now()
         dt_string = currentTime.strftime("%d/%m %H:%M")
         niceDate = "["+dt_string+"] "
         #print(niceDate)
@@ -205,13 +206,15 @@ class Ui_chatWindow(QMainWindow):
         cipher = pgpy.constants.SymmetricKeyAlgorithm.AES256
         sessionkey = cipher.gen_key()
         stringMsg = pgpy.PGPMessage.new(niceDate+self.displayName+": "+stringMsg)
+        enc_msg = self.priKey.pubkey.encrypt(stringMsg, cipher=cipher, sessionkey=sessionkey)
+        
         for i in range(len(self.friendPubKeys)):
             if(i==0):
-                enc_msg = self.friendPubKeys[i].encrypt(stringMsg, cipher=cipher, sessionkey=sessionkey)
+                enc_msg = self.friendPubKeys[i].encrypt(enc_msg, cipher=cipher, sessionkey=sessionkey)
             else:
                 enc_msg = self.friendPubKeys[i].encrypt(enc_msg, cipher=cipher, sessionkey=sessionkey)
-
-        enc_msg = self.priKey.pubkey.encrypt(enc_msg, cipher=cipher, sessionkey=sessionkey)
+            
+        #fin_msg = self.priKey.pubkey.encrypt(enc_msg, cipher=cipher, sessionkey=sessionkey)
         del sessionkey
         #encryptedMsg = str(enc_msg)
         self.MQTTConn.sendMsg(str(enc_msg))
