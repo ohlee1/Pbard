@@ -11,10 +11,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-import sys, pgpy, datetime, os
+import sys, pgpy, datetime, os, mqtt_pBard
 import paho.mqtt.client as mqtt
 from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm
-
+'''
 def on_connect(client, userdata, flags, rc):
     #TODO
     #Add if else ladder for different result 'rc' codes e.g code 5 for unauthrorised
@@ -52,13 +52,14 @@ client.on_connect = on_connect
 client.on_message = on_message
 client.on_subscribe = on_subscribe
 client.on_publish = on_publish
-
+'''
 class Ui_chatWindow(QMainWindow):
     def setupUi(self, chatWindow):
         chatWindow.setObjectName("chatWindow")
         chatWindow.resize(698, 527)
         self.count = 1
         self.friendPubKeys = []
+        self.MQTT_settings = []
         self.centralwidget = QtWidgets.QWidget(chatWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.centralwidget)
@@ -102,6 +103,7 @@ class Ui_chatWindow(QMainWindow):
         self.gridLayout_4.addWidget(self.widget, 0, 0, 1, 1)
         self.gridLayout_5.addLayout(self.gridLayout_4, 0, 0, 1, 1)
         chatWindow.setCentralWidget(self.centralwidget)
+        self.window=chatWindow
 
         self.retranslateUi(chatWindow)
         QtCore.QMetaObject.connectSlotsByName(chatWindow)
@@ -113,8 +115,8 @@ class Ui_chatWindow(QMainWindow):
     def closeEvent(self, event):
         print("chat window closed")
         self.count=0
-        self.client.loop_stop()
-        self.client.disconnect()
+        self.MQTTConn.closeConn()
+        self.MQTTConn.close()
 
     def retranslateUi(self, chatWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -131,11 +133,22 @@ class Ui_chatWindow(QMainWindow):
         self.currentDir=currentDir
         #strange behaviour with lstrip
         #uses chat folder name for the msg thread topic
-        self.msgThread = keyFolder.lstrip(currentDir).lstrip("chats")
+        self.MQTT_settings.append(keyFolder.lstrip(currentDir).lstrip("chats"))
 
         #read in config file details
         with open(self.keyFolder+"/connection_details.conf", "r") as f:
             self.confDetails = f.readlines()
+        for dtl in self.confDetails:
+            self.MQTT_settings.append(dtl.split(":",1)[1].rstrip("\n"))
+
+        print(self.MQTT_settings)
+        print(self.window)
+
+        self.MQTTConn = mqtt_pBard.chatWinConn()
+        self.MQTTConn.setupConn(self.MQTT_settings, self.window, self.currentDir, self.keyFolder)
+        self.MQTTConn.printDetails()
+
+        '''
         #extract relevant information from file
         #first line is username, split once by : then take the username and remove the \n from the end
         #repeat for other details
@@ -153,9 +166,11 @@ class Ui_chatWindow(QMainWindow):
         except:
             pass
             #no username or password set
-
+        '''
         #import private key
         self.priKey, _ = pgpy.PGPKey.from_file(self.currentDir+"my-keys/myprikey.asc")
+
+
         #get name from prikey file to use as displayname
         self.displayName = self.priKey.userids[0].name
         #import friend keys
@@ -164,13 +179,42 @@ class Ui_chatWindow(QMainWindow):
                 temp, _ =pgpy.PGPKey.from_file(keyFolder+"/"+files)
                 self.friendPubKeys.append(temp)
         #connect to server and attempt to subscribe/start a network loop
+        '''
         self.client.connect(self.MQTT_serverIP, self.MQTT_serverPort, 30)
         try:
             self.client.subscribe(self.msgThread, qos=2)
             self.client.loop_start()
         except:
             print("REEEEE error subbing to thread")
+        '''
 
+    def recMsg(self, pgpMsg):
+        toDecrypt=pgpy.PGPMessage.from_blob(pgpMsg)
+        final = self.priKey.decrypt(toDecrypt)
+        finStr = str(final.message)
+        self.window.textBrowser.append(finStr)
+
+    def sendMsg(self):
+        stringMsg = self.chatInputBox.text()
+        self.chatInputBox.clear()
+        currentTime = datetime.now()
+        dt_string = currentTime.strftime("%d/%m %H:%M")
+        niceDate = "["+dt_string+"] "
+        #print(niceDate)
+        #self.textBrowser.append(stringMsg)
+        cipher = pgpy.constants.SymmetricKeyAlgorithm.AES256
+        sessionkey = cipher.gen_key()
+        stringMsg = pgpy.PGPMessage.new(niceDate+self.displayName+": "+stringMsg)
+        for i in range(len(self.friendPubKeys)):
+            if(i==0):
+                enc_msg = self.friendPubKeys[i].encrypt(stringMsg, cipher=cipher, sessionkey=sessionkey)
+            else:
+                enc_msg = self.friendPubKeys[i].encrypt(enc_msg, cipher=cipher, sessionkey=sessionkey)
+
+        enc_msg = self.priKey.pubkey.encrypt(enc_msg, cipher=cipher, sessionkey=sessionkey)
+        del sessionkey
+        #encryptedMsg = str(enc_msg)
+        self.MQTTConn.sendMsg(str(enc_msg))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
