@@ -28,54 +28,33 @@ def on_subscribe(client, userdata, mid, granted_qos):
 
 #Callback for message receive
 def on_message(client, userdata, msg):
+    #remove bytes characters and then pass to chat window to decrypt and display
     y=msg.payload.decode()
     chatWindowob.recMsg(y)
-    '''
-    toDecrypt=pgpy.PGPMessage.from_blob(y)
-    final = priKey.decrypt(toDecrypt)
-    finStr = str(final.message)
-    splStr = finStr.split(":")
-    MainWindow.textBrowser.append(finStr)
-    #if(splStr[0] != username):
-    #    MainWindow.textBrowser.append(finStr)
-    #    print(finStr)
-    #else:
-    #    print("", end="")
-'''
-
-
-
-
-
-#Setting client to tls when enabled on Mosquitto
-"""
-client.tls_set()
-"""
-
-
-
-
-
-
-
 
 
 
 class chatWinConn():
 
     def setupConn(self, settings, window, currentDir, keyFolder):
-        global msgThread, MQTT_username, MQTT_serverIP, MQTT_serverPort, client, chatWindowob
+        #declare global variables so that mqtt functions outside this class can use them
+        global client, chatWindowob
+        #save settings that were passed in
         self.MQTT_settings=settings
+        #save current working directory that was passed in
         self.currentDir=currentDir
+        #make list to append keys to later
         self.friendPubKeys = []
+        #save chat window object that was passed in
         chatWindowob=window
 
+        #extract settings from settings list
         self.msgThread= self.MQTT_settings[0]
         self.MQTT_username = self.MQTT_settings[1]
         self.MQTT_serverIP = self.MQTT_settings[2]
         self.MQTT_serverPort = int(self.MQTT_settings[3])
         
-
+        #set client connection settings and username from conf file
         client = mqtt.Client(client_id=self.MQTT_username, clean_session=False, userdata=None, transport="tcp")
 
         #Setting up callbacks for the client object
@@ -84,82 +63,39 @@ class chatWinConn():
         client.on_subscribe = on_subscribe
         client.on_publish = on_publish
 
+        #try to set a username and password (if they're required/provided)
         try:
             client.username_pw_set(username=self.MQTT_settings[4], password=self.MQTT_settings[5])
         except:
-            pass
-        '''
-        self.priKey, _ = pgpy.PGPKey.from_file(self.currentDir+"my-keys/myprikey.asc")
-        self.displayName = self.priKey.userids[0].name
-
+            pass       
         
-        #read in each file in the folder friend-public-key and store them in a list
-        for files in os.listdir(keyFolder):
-            if files.endswith(".asc"):
-                temp, _ =pgpy.PGPKey.from_file(keyFolder+"/"+files)
-                self.friendPubKeys.append(temp)
-'''        
-        
-        #client.connect("52.232.13.39", 1883, 30)
+        #connect to server with ip and port from config file
         client.connect(self.MQTT_serverIP, self.MQTT_serverPort, 30)
+        #attempt to subscribe to the thread
         try:
             client.subscribe(self.msgThread, qos=2)
             client.loop_start()
         except:
-            print("REEEEE error subbing to thread")
+            print("error subbing to thread")
         
-
+    #just for testing purposes
     def printDetails(self):
         print(self.MQTT_settings)
         print(chatWindowob)
 
+    #all this to stop loop and close connection when exiting chat window
     def closeConn(self):
         client.loop_stop()
         client.disconnect()
 
+    #pgp msg passed in from chat window and published here
     def sendMsg(self, pgpMsg):
         client.publish(self.msgThread, pgpMsg, qos=2, retain=False)
 
         
 
-'''        
-    def closeEvent(self, event):
-        
-        client.loop_stop()
-        client.disconnect()
-        print("Program closed and disconnected from server")
 
-    def pressButt(self):
-        stringMsg = self.lineEdit.text()
-        self.lineEdit.clear()
-        currentTime = datetime.now()
-        dt_string = currentTime.strftime("%d/%m %H:%M")
-        niceDate = "["+dt_string+"] "
-        print(niceDate)
-        #self.textBrowser.append(stringMsg)
-        cipher = pgpy.constants.SymmetricKeyAlgorithm.AES256
-        sessionkey = cipher.gen_key()
-        stringMsg = pgpy.PGPMessage.new(niceDate+username+": "+stringMsg)
-        for i in range(len(friendPubKeys)):
-            if(i==0):
-                enc_msg = friendPubKeys[i].encrypt(stringMsg, cipher=cipher, sessionkey=sessionkey)
-            else:
-                enc_msg = friendPubKeys[i].encrypt(enc_msg, cipher=cipher, sessionkey=sessionkey)
-
-        enc_msg = priKey.pubkey.encrypt(enc_msg, cipher=cipher, sessionkey=sessionkey)
-        del sessionkey
-        encryptedMsg = str(enc_msg)
-        client.publish(msgThread, encryptedMsg, qos=2, retain=False)
-        '''
 
 if __name__ == "__main__":
     print("test")
     
-'''
-    client.connect("52.232.13.39", 1883, 30)
-    try:
-        client.subscribe(msgThread, qos=2)
-        client.loop_start()
-    except:
-        print("\nError subscribing to thread")
-'''
