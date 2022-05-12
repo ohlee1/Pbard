@@ -131,7 +131,7 @@ class Ui_chatWindow(QMainWindow):
         finStr = str(final.message)
         #display the msg
         self.textBrowser.append(finStr)
-		self.textBrowser.moveCursor(QTextCursor.End)
+        self.textBrowser.moveCursor(QTextCursor.End)
 
     #called when message is being sent (enter pressed or send button)
     def sendMsg(self):
