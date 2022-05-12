@@ -130,7 +130,8 @@ class Ui_chatWindow(QMainWindow):
         #pull out the msg
         finStr = str(final.message)
         #display the msg
-        self.window.textBrowser.append(finStr)
+        self.textBrowser.append(finStr)
+		self.textBrowser.moveCursor(QTextCursor.End)
 
     #called when message is being sent (enter pressed or send button)
     def sendMsg(self):
@@ -173,7 +174,7 @@ if __name__ == "__main__":
 #
 # WARNING! All changes made in this file will be lost!
 
-
+'''
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -332,3 +333,4 @@ if __name__ == "__main__":
     MainWindow.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+'''
