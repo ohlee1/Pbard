@@ -16,6 +16,9 @@ import sys, pgpy, os
 from confirmation_window import Ui_Dialog
 
 class Ui_keyGenWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        
     def setupUi(self, keyGenWindow):
         keyGenWindow.setObjectName("keyGenWindow")
         keyGenWindow.resize(800, 600)

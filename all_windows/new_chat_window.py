@@ -17,6 +17,9 @@ import random, string, sys, os, shutil, pgpy
 
 
 class Ui_newChatWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        
     def setupUi(self, newChatWindow):
         newChatWindow.setObjectName("newChatWindow")
         newChatWindow.resize(651, 606)

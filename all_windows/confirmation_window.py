@@ -15,6 +15,9 @@ import sys
 #from key_generator_window import Ui_keyGenWindow
 
 class Ui_Dialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(303, 122)
