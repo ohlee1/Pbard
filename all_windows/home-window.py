@@ -33,6 +33,9 @@ except ModuleNotFoundError as e:
 
 
 class Ui_MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        
     def setupUi(self, MainWindow):
         #qt designer code begin
         MainWindow.setObjectName("MainWindow")

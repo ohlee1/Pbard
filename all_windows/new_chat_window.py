@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from chat_window import Ui_chatWindow
+from confirmation_window import Ui_Dialog
 import random, string, sys, os, shutil, pgpy
 
 

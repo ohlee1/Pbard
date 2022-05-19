@@ -17,6 +17,10 @@ from confirmation_window import Ui_Dialog
 from time import sleep
 
 class Ui_openChatWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        
+
     def setupUi(self, openChatWindow):
         openChatWindow.setObjectName("openChatWindow")
         openChatWindow.resize(800, 600)
